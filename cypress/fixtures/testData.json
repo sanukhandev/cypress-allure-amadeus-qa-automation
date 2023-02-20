@@ -1,0 +1,18 @@
+[
+  {
+    "scenario": "Should book a one-way ticket successfully",
+    "type": "One Way",
+    "origin": "DXB-Dubai",
+    "destination": "LHR-London",
+    "departureDate": "March 25",
+    "returnDate": "March 30",
+    "adults": "1",
+    "children": "0",
+    "infants": "0",
+    "class": "Economy",
+    "currency": "AED",
+    "expected": "Success",
+    "status": "Pass",
+    "comments": "Test case passed"
+  }
+]

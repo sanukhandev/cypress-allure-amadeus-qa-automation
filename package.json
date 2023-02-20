@@ -1,0 +1,23 @@
+{
+  "name": "newamadeustest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cy:run": " npx cypress open --browser chrome  --e2e -e allure=true",
+    "clean:folders": "rm -R -f allure-report/* && rm -R -f allure-results/*",
+    "allure:report": "npx allure generate allure-results --clean  -o allure-report && allure open allure-report --port 8080 --host localhost",
+    "beforetest": "npm run clean:folders",
+    "tests": "npm run cy:run && npm run aftertest",
+    "aftertest": "npm run allure:report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@shelex/cypress-allure-plugin": "^2.35.2",
+    "allure": "^0.0.0",
+    "allure-commandline": "^2.21.0",
+    "cypress": "^12.6.0"
+  }
+}
