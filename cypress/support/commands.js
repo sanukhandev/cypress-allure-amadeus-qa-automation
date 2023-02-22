@@ -23,3 +23,13 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+
+Cypress.Commands.add('getPaymentGatewayPage', (selector, value) => {
+    cy.get('iframe')
+        .should((iframe) => expect(iframe.contents().find(selector)).to.exist)
+        .then((iframe) => cy.wrap(iframe.contents().find(selector)))
+        .within((input) => {
+            cy.wrap(input).should('not.be.disabled').clear().type(value)
+        })
+})
