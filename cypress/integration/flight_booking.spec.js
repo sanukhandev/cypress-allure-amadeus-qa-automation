@@ -1,22 +1,39 @@
 const testData = require('../fixtures/testData.json');
 const customerData = require('../fixtures/sampleCustomer.json');
-describe('Dynamic Test Cases found:' + testData.length, () => {
-    testData.forEach(({scenario, type, origin, destination, departureDate}) => {
-        const {Adults, Children, Infants} = customerData;
+
+// beforeEach(() => {
+//     cy.wrap(Cypress.automation('remote:debugger:protocol', {
+//         command: 'Network.clearBrowserCache',
+//     }))
+// });
+testData.forEach(({scenario, type, origin, destination, departureDate, returnDate, Ariline}) => {
+    const {Adults, Children, Infants} = customerData;
+    describe(`${scenario} from ${origin} to ${destination}`, () => {
         it(scenario, () => {
             cy.visit('https://ngtest.aosuat.com/', {timeout: 10000});
             cy.wait(5000);
             cy.get("span").contains(type).click();
             cy.get('input#OwDropToOrigin').type(origin.split('-')[0].trim());
-            cy.get('div.dropdown-menuRight.dropdown-menu.ng-star-inserted').filter(':visible').get('span').contains(origin.split('-')[1].trim()).click();
+            cy.get('div.dropdown-menuRight.dropdown-menu.ng-star-inserted').filter(':visible').find('span').contains(origin.split('-')[1].trim()).click();
             cy.get('input#OwDropFromDepart').type(destination.split('-')[0].trim())
             cy.get('div.dropdown-menuRight.dropdown-menu.ng-star-inserted').filter(':visible').find('span').contains(destination.split('-')[1].trim()).click();
-            cy.get("input#calenderDynamic0").click();
-            cy.get("div.p-datepicker-multiple-month").get('span').contains(departureDate.split(' ')[1]).click();
+            cy.get('.empireFlight_searchdate-form').click()
+                .find('span.p-datepicker-month').contains(departureDate.split(' ')[1])
+                .parent().parent().parent().find('span').contains(departureDate.split(' ')[0]).click()
             cy.get("button.empireFlight_search-button").click();
             cy.wait(10000);
-            cy.get("empire-ow-card").get("div.empireFlight_listing-card").first().get("span").contains('Select flight').click();
-            cy.get("div.temp_filterMobileBody").find("span.flightDetailText").contains('Book Now').click();
+            cy.get("div.empireFlight_mobBoxShow").get("div.empireFlight_FlightNames > h4").contains(Ariline.split('-')[0].trim())
+                .parent()
+                .parent()
+                .parent()
+                .parent()
+                .parent()
+                .parent()
+                .parent()
+                .parent()
+                .parent()
+                .parent().find(".empireFlight_button").contains('Select flight').click();
+            cy.get("span.flightDetailText").contains('Book Now').click();
             cy.wait(10000)
             cy.get('div.empireFlight_TravelerFormDetails').find('ng-select[formcontrolname="Title"]').click()
             cy.get('div.ng-dropdown-panel-items').find('div.ng-option').contains(Adults[0].title).click()
@@ -34,18 +51,21 @@ describe('Dynamic Test Cases found:' + testData.length, () => {
             cy.get('button').find('div').contains('Continue to payment').click()
             cy.get('div').contains('Proceed to Pay').click()
             cy.wait(20000)
-          cy.origin('https://sbcheckout.payfort.com/',() => {
-              cy.get('input#cardNoInput').type('4005550000000001')
-              cy.get('input#chNameInput').type('Test')
-              cy.get('input#expDateInput').type('05/25')
-              cy.get('input#cvvInput').type('123')
-              cy.get('button').contains('Pay').click()
-          })
+            cy.origin('https://sbcheckout.payfort.com/', () => {
+                cy.get('input#cardNoInput').type('4005550000000001')
+                cy.get('input#chNameInput').type('Test')
+                cy.get('input#expDateInput').type('05/25')
+                cy.get('input#cvvInput').type('123')
+                cy.get('button').contains('Pay').click()
+            })
             cy.wait(30000)
             cy.get('div').contains('Your booking is Confirmed').should('be.visible')
 
 
         });
+    });
 
-    })
-});
+})
+
+
+
