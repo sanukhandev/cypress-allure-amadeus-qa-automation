@@ -11,7 +11,7 @@
     "tests": "npm run cy:run && npm run aftertest",
     "aftertest": "npm run allure:report",
     "cy:run:headless": "cypress run --browser chrome --headless -e allure=true",
-    "run:docker": "docker run --rm -p 8080:8080 -v ./allure_results:/usr/src/app/allure-results -v ./cypress_videos:/usr/src/app/cypress/videos newamadeustest:latest"
+    "run:docker": "docker run --rm -p 8080:8080 -v $(pwd)/allure_results:/usr/src/app/allure-results -v $(pwd)/cypress_videos:/usr/src/app/cypress/videos newamadeustest"
   },
   "keywords": [],
   "author": "",
