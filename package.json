@@ -9,7 +9,9 @@
     "allure:report": "npx allure generate allure-results --clean  -o allure-report && allure open allure-report --port 8080 --host localhost",
     "beforetest": "npm run clean:folders",
     "tests": "npm run cy:run && npm run aftertest",
-    "aftertest": "npm run allure:report"
+    "aftertest": "npm run allure:report",
+    "cy:run:headless": "cypress run --browser chrome --headless -e allure=true",
+    "run:docker": "docker run --rm -p 8080:8080 -v ./allure_results:/usr/src/app/allure-results -v ./cypress_videos:/usr/src/app/cypress/videos newamadeustest:latest"
   },
   "keywords": [],
   "author": "",
