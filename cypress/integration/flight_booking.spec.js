@@ -15,7 +15,7 @@ for (const testDatum of testData) {
             cy.get('.empireFlight_SortBy').should('be.visible');
             cy.wait(2000);
             if (rest.key === 'OW' || rest.key === 'IRT' || rest.key === 'NMC') {
-                cy.get('.empireFlight_ListingBodycontainer').contains('Select flight').click({force: true})
+                cy.get('.empireFlight_ListingBodycontainer').contains('Select').click({force: true})
                 cy.wait('@networkRequests', {timeout: 30000});
             } else {
                 cy.get('.empireFlight_McSummaryTotalPrice').contains('Book Now').click({force: true})

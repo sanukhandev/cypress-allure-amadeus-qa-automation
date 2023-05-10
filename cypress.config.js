@@ -9,7 +9,6 @@ module.exports = defineConfig({
         retries: 2,
         viewportWidth: 1200,
         chromeFlags: '--disable-gpu --no-sandbox',
-        chromeWebSecurity: false,
         setupNodeEvents(on, config) {
             allureWriter(on, config);
             return config;
