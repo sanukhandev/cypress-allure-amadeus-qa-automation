@@ -1,3 +1,7 @@
+const {jsonToQueryString} = require("./utils");
+
+
+
 describe('Flight Page', () => {
     it('Verify Advanced search options', () => {
         // Go to the '/flight' page
@@ -25,5 +29,82 @@ describe('Flight Page', () => {
             });
     });
 
+    it('Verify cards and direct flights count', () => {
+        cy.intercept('POST', '**/api/v2/offer/lowfare').as('lowfareRequest');
+        const query = jsonToQueryString( {
+            "dep1": "DXB",
+            "ret1": "LON",
+            "dtt1": "22-Jun-2023",
+            "cl1": "Y",
+            "triptype": 1,
+            "adult": 1,
+            "child": 0,
+            "infant": 0,
+            "direct": true,
+            "baggage": false,
+            "key": "OW",
+            "airlines": "",
+            "ref": false,
+            "langcode": "EN",
+            "curr": "AED",
+            "ipc": false,
+            "dep2": "",
+            "ret2": "",
+            "dtt2": "",
+            "cl2": "Y",
+            "dep3": "",
+            "ret3": "",
+            "dtt3": "",
+            "cl3": ""
+        })
+        const URL = `Flight/search?${query}`
+        cy.visit(URL);
+        cy.wait(2000)
+        cy.wait('@lowfareRequest', { multiple: true });
+        cy.wait(2000)
+        cy.get('span.empireFlight_stopvia')
+            .each(($span) => {
+                cy.wrap($span).should('contain', 'Direct');
+            });
 
+    })
+    it('Verify cards and Refundable  flights count', () => {
+        cy.intercept('POST', '**/api/v2/offer/lowfare').as('lowfareRequest');
+        const query = jsonToQueryString( {
+            "dep1": "DXB",
+            "ret1": "LON",
+            "dtt1": "22-Jun-2023",
+            "cl1": "Y",
+            "triptype": 1,
+            "adult": 1,
+            "child": 0,
+            "infant": 0,
+            "direct": false,
+            "baggage": false,
+            "key": "OW",
+            "airlines": "",
+            "ref": true,
+            "langcode": "EN",
+            "curr": "AED",
+            "ipc": false,
+            "dep2": "",
+            "ret2": "",
+            "dtt2": "",
+            "cl2": "Y",
+            "dep3": "",
+            "ret3": "",
+            "dtt3": "",
+            "cl3": ""
+        })
+        const URL = `Flight/search?${query}`
+        cy.visit(URL);
+        cy.wait(2000)
+        cy.wait('@lowfareRequest', { multiple: true });
+        cy.wait(2000)
+        cy.get('div.empireFlight_refund-text')
+            .each(($span) => {
+                cy.wrap($span).should('contain', 'Refundable');
+            });
+
+    })
 });
