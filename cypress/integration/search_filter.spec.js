@@ -28,7 +28,6 @@ describe('Flight Page', () => {
                 expect($labels.eq(2).text().trim()).to.equal('Refundable');
             });
     });
-
     it('Verify cards and direct flights count', () => {
         cy.intercept('POST', '**/api/v2/offer/lowfare').as('lowfareRequest');
         const query = jsonToQueryString( {
@@ -104,6 +103,124 @@ describe('Flight Page', () => {
         cy.get('div.empireFlight_refund-text')
             .each(($span) => {
                 cy.wrap($span).should('contain', 'Refundable');
+            });
+
+    })
+    it('Verify cards and Emirates Flights  flights count', () => {
+        cy.intercept('POST', '**/api/v2/offer/lowfare').as('lowfareRequest');
+        const query = jsonToQueryString( {
+            "dep1": "DXB",
+            "ret1": "LON",
+            "dtt1": "22-Jun-2023",
+            "cl1": "Y",
+            "triptype": 1,
+            "adult": 1,
+            "child": 0,
+            "infant": 0,
+            "direct": false,
+            "baggage": false,
+            "key": "OW",
+            "airlines": "EK",
+            "ref": false,
+            "langcode": "EN",
+            "curr": "AED",
+            "ipc": false,
+            "dep2": "",
+            "ret2": "",
+            "dtt2": "",
+            "cl2": "Y",
+            "dep3": "",
+            "ret3": "",
+            "dtt3": "",
+            "cl3": ""
+        })
+        const URL = `Flight/search?${query}`
+        cy.visit(URL);
+        cy.wait(2000)
+        cy.wait('@lowfareRequest', { multiple: true });
+        cy.wait(2000)
+        cy.get('div.empireFlight_FlightNames')
+            .each(($div) => {
+                cy.wrap($div).invoke('text').should('match', /^Emirates\s/);
+            });
+
+    })
+    it('Verify cards and Saudi Arabian Airlines  Flights  flights count', () => {
+        cy.intercept('POST', '**/api/v2/offer/lowfare').as('lowfareRequest');
+        const query = jsonToQueryString( {
+            "dep1": "DXB",
+            "ret1": "LON",
+            "dtt1": "22-Jun-2023",
+            "cl1": "Y",
+            "triptype": 1,
+            "adult": 1,
+            "child": 0,
+            "infant": 0,
+            "direct": false,
+            "baggage": false,
+            "key": "OW",
+            "airlines": "SV",
+            "ref": false,
+            "langcode": "EN",
+            "curr": "AED",
+            "ipc": false,
+            "dep2": "",
+            "ret2": "",
+            "dtt2": "",
+            "cl2": "Y",
+            "dep3": "",
+            "ret3": "",
+            "dtt3": "",
+            "cl3": ""
+        })
+        const URL = `Flight/search?${query}`
+        cy.visit(URL);
+        cy.wait(2000)
+        cy.wait('@lowfareRequest', { multiple: true });
+        cy.wait(2000)
+        cy.get('div.empireFlight_FlightNames')
+            .each(($div) => {
+                cy.wrap($div).invoke('text').should('match', /^Saudi Arabian Airlines\s/);
+            });
+
+    })
+    it('Verify cards and Saudi Arabian Airlines And Emirates  Flights  flights count', () => {
+        cy.intercept('POST', '**/api/v2/offer/lowfare').as('lowfareRequest');
+        const query = jsonToQueryString( {
+            "dep1": "DXB",
+            "ret1": "LON",
+            "dtt1": "22-Jun-2023",
+            "cl1": "Y",
+            "triptype": 1,
+            "adult": 1,
+            "child": 0,
+            "infant": 0,
+            "direct": false,
+            "baggage": false,
+            "key": "OW",
+            "airlines": "SV,EK",
+            "ref": false,
+            "langcode": "EN",
+            "curr": "AED",
+            "ipc": false,
+            "dep2": "",
+            "ret2": "",
+            "dtt2": "",
+            "cl2": "Y",
+            "dep3": "",
+            "ret3": "",
+            "dtt3": "",
+            "cl3": ""
+        })
+        const URL = `Flight/search?${query}`
+        cy.visit(URL);
+        cy.wait(2000)
+        cy.wait('@lowfareRequest', { multiple: true });
+        cy.wait(2000)
+        cy.get('div.empireFlight_FlightNames')
+            .each(($div) => {
+                cy.wrap($div).invoke('text')
+                    .should('match', /^(Saudi Arabian Airlines|Emirates)\s/);
             });
 
     })
