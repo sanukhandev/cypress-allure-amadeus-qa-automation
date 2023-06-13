@@ -59,7 +59,7 @@ describe('Flight Page', () => {
         const URL = `Flight/search?${query}`
         cy.visit(URL);
         cy.wait(2000)
-        cy.wait('@lowfareRequest', { multiple: true });
+        cy.wait('@lowfareRequest', { timeout:120000 });
         cy.wait(2000)
         cy.get('span.empireFlight_stopvia')
             .each(($span) => {
@@ -98,7 +98,7 @@ describe('Flight Page', () => {
         const URL = `Flight/search?${query}`
         cy.visit(URL);
         cy.wait(2000)
-        cy.wait('@lowfareRequest', { multiple: true });
+        cy.wait('@lowfareRequest', { timeout:120000 });
         cy.wait(2000)
         cy.get('div.empireFlight_refund-text')
             .each(($span) => {
@@ -137,7 +137,7 @@ describe('Flight Page', () => {
         const URL = `Flight/search?${query}`
         cy.visit(URL);
         cy.wait(2000)
-        cy.wait('@lowfareRequest', { multiple: true });
+        cy.wait('@lowfareRequest', { timeout:120000 });
         cy.wait(2000)
         cy.get('div.empireFlight_FlightNames')
             .each(($div) => {
@@ -176,7 +176,7 @@ describe('Flight Page', () => {
         const URL = `Flight/search?${query}`
         cy.visit(URL);
         cy.wait(2000)
-        cy.wait('@lowfareRequest', { multiple: true });
+        cy.wait('@lowfareRequest', { timeout:120000 });
         cy.wait(2000)
         cy.get('div.empireFlight_FlightNames')
             .each(($div) => {
@@ -215,7 +215,7 @@ describe('Flight Page', () => {
         const URL = `Flight/search?${query}`
         cy.visit(URL);
         cy.wait(2000)
-        cy.wait('@lowfareRequest', { multiple: true });
+        cy.wait('@lowfareRequest', { timeout:120000 });
         cy.wait(2000)
         cy.get('div.empireFlight_FlightNames')
             .each(($div) => {
