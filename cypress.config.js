@@ -5,8 +5,8 @@ const allureWriter = require("@shelex/cypress-allure-plugin/writer");
 module.exports = defineConfig({
     e2e: {
         specPattern: 'cypress/integration/**/*.spec.js',
-        baseUrl: 'https://ngtest.aosuat.com/',
-        retries: 2,
+        baseUrl: 'https://ngtest.preprod.amadeusonlinesuite.com/',
+        retries: 1,
         viewportWidth: 1200,
         chromeFlags: '--disable-gpu --no-sandbox',
         setupNodeEvents(on, config) {

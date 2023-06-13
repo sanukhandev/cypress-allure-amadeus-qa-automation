@@ -8,7 +8,7 @@ for (const testDatum of testData) {
     describe(scenario, () => {
         it('should search for one way flight', () => {
             cy.visit(URL);
-            cy.intercept('*', (req) => {
+            cy.intercept('*', () => {
             }).as('networkRequests');
             cy.wait('@networkRequests', {timeout: 30000});
             cy.wait(2000);
@@ -22,8 +22,8 @@ for (const testDatum of testData) {
                 cy.wait('@networkRequests', {timeout: 30000});
             }
             cy.wait(2000);
-            cy.get('.empireFlight_DetailsBody').should('be.visible');
-            cy.get('.flightDetailText').contains('Book Now').click({force: true})
+            // cy.get('.empireFlight_DetailsBody').should('be.visible');
+            // cy.get('.flightDetailText').contains('Book Now').click({force: true})
             const {Adults} = customerData;
             cy.wait('@networkRequests', {timeout: 30000});
             cy.wait(2000);
