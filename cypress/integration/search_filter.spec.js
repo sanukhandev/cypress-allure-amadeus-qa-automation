@@ -1,5 +1,5 @@
 const {jsonToQueryString, defalutOWpayloadQuery} = require("./utils");
-describe('Flight Page', () => {
+describe('Flight Search Page filters', () => {
     const waitForLowfareRequest = () => {
         cy.wait('@lowfareRequest', {timeout: 120000});
         cy.wait(2000);
