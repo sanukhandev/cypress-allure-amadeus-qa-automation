@@ -2,18 +2,19 @@ const {jsonToQueryString, defalutOWpayloadQuery} = require("./utils");
 
 
 describe('Flight Search Page sort filter', () => {
-
+    let cheapest;
     const getOptionAmount = (optionKey) => {
-        let optionAmount = '';
+        return cy.contains('div.empireFlight_SortByOption', optionKey)
+            .find('h4:nth-child(2)')
+            .invoke('text')
+            .then((optionAmount) => optionAmount.trim().replace(/[^0-9.]/g, ''));
+    };
 
-        cy.get('div.empireFlight_SortByWrapper').within(() => {
-            cy.contains(optionKey).then(($option) => {
-                optionAmount = $option.find('.empireFlight_SortByOption h4').text();
-            });
-        });
 
-        return optionAmount;
-    }
+    beforeEach(() => {
+        getFlightResponsePage([]);
+        getOptionAmount('Cheapest').then((amount) => cheapest =  parseFloat(amount));
+    });
     const waitForLowfareRequest = () => {
         cy.wait('@lowfareRequest', {timeout: 120000});
         cy.wait(2000);
@@ -27,7 +28,6 @@ describe('Flight Search Page sort filter', () => {
     };
 
     it('Verify sort filters are visible', function () {
-        getFlightResponsePage([])
         cy.get('div.empireFlight_SortBy', { timeout: 10000 }).should('be.visible');
         cy.get('div.empireFlight_SortByWrapper').within(() => {
             cy.contains('Cheapest').should('be.visible');
@@ -37,8 +37,20 @@ describe('Flight Search Page sort filter', () => {
     });
 
     it('Verify cheapest flight', function () {
-        getFlightResponsePage([])
-        const cheapest = getOptionAmount('Cheapest')
+        let cheapestAmount = null;
+        cy.get('h2.empireFlight_amount')
+            .each(($amount) => {
+                const amountText = $amount.text().trim();
+                const amountValue = parseFloat(amountText.replace(/[^0-9.]/g, ''));
+                if (!isNaN(amountValue) && (cheapestAmount === null || amountValue < cheapestAmount)) {
+                    cheapestAmount = amountValue;
+                }
+            })
+            .then(() => {
+                const formattedCheapestAmount = cheapestAmount ? parseFloat(cheapest) : 0;
+                expect(formattedCheapestAmount).to.equal(cheapest);
+            });
+    });
 
-    })
+
 })
