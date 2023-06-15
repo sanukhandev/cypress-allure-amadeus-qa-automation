@@ -29,49 +29,54 @@ describe('Flight Search Page sort filter', () => {
         waitForLowfareRequest();
     };
 
-    // it('Verify sort filters are visible', function () {
-    //     cy.get('div.empireFlight_SortBy', { timeout: 10000 }).should('be.visible');
-    //     cy.get('div.empireFlight_SortByWrapper').within(() => {
-    //         cy.contains('Cheapest').should('be.visible');
-    //         cy.contains('Fastest').should('be.visible');
-    //         cy.contains('Best Value').should('be.visible');
-    //     });
-    // });
-    //
-    // it('Verify cheapest flight', function () {
-    //     let cheapestAmount = null;
-    //     cy.get('h2.empireFlight_amount')
-    //         .each(($amount) => {
-    //             const amountText = $amount.text().trim();
-    //             const amountValue = parseFloat(amountText.replace(/[^0-9.]/g, ''));
-    //             if (!isNaN(amountValue) && (cheapestAmount === null || amountValue < cheapestAmount)) {
-    //                 cheapestAmount = amountValue;
-    //             }
-    //         })
-    //         .then(() => {
-    //             const formattedCheapestAmount = cheapestAmount ? parseFloat(cheapest) : 0;
-    //             expect(formattedCheapestAmount).to.equal(cheapest);
-    //         });
-    // });
+    it('Verify sort filters are visible', function () {
+        cy.get('div.empireFlight_SortBy', { timeout: 10000 }).should('be.visible');
+        cy.get('div.empireFlight_SortByWrapper').within(() => {
+            cy.contains('Cheapest').should('be.visible');
+            cy.contains('Fastest').should('be.visible');
+            cy.contains('Best Value').should('be.visible');
+        });
+    });
+
+    it('Verify cheapest flight', function () {
+        let cheapestAmount = null;
+        cy.get('h2.empireFlight_amount')
+            .each(($amount) => {
+                const amountText = $amount.text().trim();
+                const amountValue = parseFloat(amountText.replace(/[^0-9.]/g, ''));
+                if (!isNaN(amountValue) && (cheapestAmount === null || amountValue < cheapestAmount)) {
+                    cheapestAmount = amountValue;
+                }
+            })
+            .then(() => {
+                const formattedCheapestAmount = cheapestAmount ? parseFloat(cheapest) : 0;
+                expect(formattedCheapestAmount).to.equal(cheapest);
+            });
+    });
 
     it('Verify fastest flight', function () {
         let leastTime = 0;
         let leastTimeText = null;
-        console.log('fastest', fastest);
+        let cost = null;
         cy.get('span.empireFlight_time')
             .each(($time) => {
                 const timeText = $time.find('p').text().trim();
+
                 if(timeText.match(/\b(\d+h \d+m)\b/)){
                     const [hours, minutes] = timeText.split('h ');
                     const timeValue = parseInt(hours) * 60 + parseInt(minutes.replace('m',''),10);
-                    console.log(leastTime, timeValue)
-                    if (timeValue < leastTime || !leastTime) {
+                    console.log('Time', timeText)
+                    if (timeValue <= leastTime || !leastTime) {
                         leastTime = timeValue;
                         leastTimeText = timeText;
+                        const parentDiv = $time.parents('.empireFlight_listing-card');
+                        cost = parentDiv.find('h2.empireFlight_amount').text().trim().replace('AED', '');
                     }
                 }
             })
-            .then(() => console.log('timeValues', leastTimeText));
+            .then(() => {
+                expect(cost).to.equal(fastest);
+            });
     });
 
 
