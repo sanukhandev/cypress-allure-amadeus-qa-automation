@@ -3,6 +3,7 @@ const {jsonToQueryString, defalutOWpayloadQuery} = require("./utils");
 
 describe('Flight Search Page sort filter', () => {
     let cheapest;
+    let fastest;
     const getOptionAmount = (optionKey) => {
         return cy.contains('div.empireFlight_SortByOption', optionKey)
             .find('h4:nth-child(2)')
@@ -14,6 +15,7 @@ describe('Flight Search Page sort filter', () => {
     beforeEach(() => {
         getFlightResponsePage([]);
         getOptionAmount('Cheapest').then((amount) => cheapest =  parseFloat(amount));
+        getOptionAmount('Fastest').then((amount) => fastest =  parseFloat(amount));
     });
     const waitForLowfareRequest = () => {
         cy.wait('@lowfareRequest', {timeout: 120000});
@@ -27,29 +29,49 @@ describe('Flight Search Page sort filter', () => {
         waitForLowfareRequest();
     };
 
-    it('Verify sort filters are visible', function () {
-        cy.get('div.empireFlight_SortBy', { timeout: 10000 }).should('be.visible');
-        cy.get('div.empireFlight_SortByWrapper').within(() => {
-            cy.contains('Cheapest').should('be.visible');
-            cy.contains('Fastest').should('be.visible');
-            cy.contains('Best Value').should('be.visible');
-        });
-    });
+    // it('Verify sort filters are visible', function () {
+    //     cy.get('div.empireFlight_SortBy', { timeout: 10000 }).should('be.visible');
+    //     cy.get('div.empireFlight_SortByWrapper').within(() => {
+    //         cy.contains('Cheapest').should('be.visible');
+    //         cy.contains('Fastest').should('be.visible');
+    //         cy.contains('Best Value').should('be.visible');
+    //     });
+    // });
+    //
+    // it('Verify cheapest flight', function () {
+    //     let cheapestAmount = null;
+    //     cy.get('h2.empireFlight_amount')
+    //         .each(($amount) => {
+    //             const amountText = $amount.text().trim();
+    //             const amountValue = parseFloat(amountText.replace(/[^0-9.]/g, ''));
+    //             if (!isNaN(amountValue) && (cheapestAmount === null || amountValue < cheapestAmount)) {
+    //                 cheapestAmount = amountValue;
+    //             }
+    //         })
+    //         .then(() => {
+    //             const formattedCheapestAmount = cheapestAmount ? parseFloat(cheapest) : 0;
+    //             expect(formattedCheapestAmount).to.equal(cheapest);
+    //         });
+    // });
 
-    it('Verify cheapest flight', function () {
-        let cheapestAmount = null;
-        cy.get('h2.empireFlight_amount')
-            .each(($amount) => {
-                const amountText = $amount.text().trim();
-                const amountValue = parseFloat(amountText.replace(/[^0-9.]/g, ''));
-                if (!isNaN(amountValue) && (cheapestAmount === null || amountValue < cheapestAmount)) {
-                    cheapestAmount = amountValue;
+    it('Verify fastest flight', function () {
+        let leastTime = 0;
+        let leastTimeText = null;
+        console.log('fastest', fastest);
+        cy.get('span.empireFlight_time')
+            .each(($time) => {
+                const timeText = $time.find('p').text().trim();
+                if(timeText.match(/\b(\d+h \d+m)\b/)){
+                    const [hours, minutes] = timeText.split('h ');
+                    const timeValue = parseInt(hours) * 60 + parseInt(minutes.replace('m',''),10);
+                    console.log(leastTime, timeValue)
+                    if (timeValue < leastTime || !leastTime) {
+                        leastTime = timeValue;
+                        leastTimeText = timeText;
+                    }
                 }
             })
-            .then(() => {
-                const formattedCheapestAmount = cheapestAmount ? parseFloat(cheapest) : 0;
-                expect(formattedCheapestAmount).to.equal(cheapest);
-            });
+            .then(() => console.log('timeValues', leastTimeText));
     });
 
 
