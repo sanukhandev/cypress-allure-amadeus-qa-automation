@@ -14,8 +14,8 @@ describe('Flight Search Page sort filter', () => {
 
     beforeEach(() => {
         getFlightResponsePage([]);
-        getOptionAmount('Cheapest').then((amount) => cheapest =  parseFloat(amount));
-        getOptionAmount('Fastest').then((amount) => fastest =  parseFloat(amount));
+        getOptionAmount('Cheapest').then((amount) => cheapest = parseFloat(amount));
+        getOptionAmount('Fastest').then((amount) => fastest = parseFloat(amount));
     });
     const waitForLowfareRequest = () => {
         cy.wait('@lowfareRequest', {timeout: 120000});
@@ -30,7 +30,7 @@ describe('Flight Search Page sort filter', () => {
     };
 
     it('Verify sort filters are visible', function () {
-        cy.get('div.empireFlight_SortBy', { timeout: 10000 }).should('be.visible');
+        cy.get('div.empireFlight_SortBy', {timeout: 10000}).should('be.visible');
         cy.get('div.empireFlight_SortByWrapper').within(() => {
             cy.contains('Cheapest').should('be.visible');
             cy.contains('Fastest').should('be.visible');
@@ -62,9 +62,9 @@ describe('Flight Search Page sort filter', () => {
             .each(($time) => {
                 const timeText = $time.find('p').text().trim();
 
-                if(timeText.match(/\b(\d+h \d+m)\b/)){
+                if (timeText.match(/\b(\d+h \d+m)\b/)) {
                     const [hours, minutes] = timeText.split('h ');
-                    const timeValue = parseInt(hours) * 60 + parseInt(minutes.replace('m',''),10);
+                    const timeValue = parseInt(hours) * 60 + parseInt(minutes.replace('m', ''), 10);
                     console.log('Time', timeText)
                     if (timeValue <= leastTime || !leastTime) {
                         leastTime = timeValue;
