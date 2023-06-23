@@ -4,6 +4,7 @@ const {jsonToQueryString, defalutOWpayloadQuery} = require("./utils");
 describe('Flight Search Page sort filter', () => {
     let cheapest;
     let fastest;
+    let best;
     const getOptionAmount = (optionKey) => {
         return cy.contains('div.empireFlight_SortByOption', optionKey)
             .find('h4:nth-child(2)')
@@ -12,10 +13,12 @@ describe('Flight Search Page sort filter', () => {
     };
 
 
-    beforeEach(() => {
+    beforeEach(
+        () => {
         getFlightResponsePage([]);
         getOptionAmount('Cheapest').then((amount) => cheapest = parseFloat(amount));
         getOptionAmount('Fastest').then((amount) => fastest = parseFloat(amount));
+        getOptionAmount('Best Value').then((amount) => best = parseFloat(amount));
     });
     const waitForLowfareRequest = () => {
         cy.wait('@lowfareRequest', {timeout: 120000});
