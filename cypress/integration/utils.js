@@ -42,7 +42,8 @@ const defalutOWpayloadQuery = (key = '', value = null) => {
         dep3: "",
         ret3: "",
         dtt3: "",
-        cl3: ""
+        cl3: "",
+        mgcc:"IN"
     }
     if (key && value) {
         payload[key] = value;

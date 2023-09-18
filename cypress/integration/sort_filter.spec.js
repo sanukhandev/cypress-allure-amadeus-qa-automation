@@ -68,7 +68,6 @@ describe('Flight Search Page sort filter', () => {
                 if (timeText.match(/\b(\d+h \d+m)\b/)) {
                     const [hours, minutes] = timeText.split('h ');
                     const timeValue = parseInt(hours) * 60 + parseInt(minutes.replace('m', ''), 10);
-                    console.log('Time', timeText)
                     if (timeValue <= leastTime || !leastTime) {
                         leastTime = timeValue;
                         leastTimeText = timeText;
