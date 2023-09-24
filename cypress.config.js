@@ -13,6 +13,7 @@ module.exports = defineConfig({
             allureWriter(on, config);
             return config;
         },
+        video: false,
         env: {
 
         }

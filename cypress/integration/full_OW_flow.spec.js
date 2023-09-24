@@ -1,13 +1,12 @@
 const {jsonToQueryString, defalutOWpayloadQuery} = require("./utils");
 const customerData = require('../fixtures/sampleCustomer.json');
 describe('Check the full OW flow with all filter checks', () => {
-    const waitForNetworkRequest = () => {
-        cy.wait('@networkRequests', {timeout: 30000}).wait(2000);
-    }
+
     const interceptBrandedFares = () => {
         cy.intercept('POST', '**/api/v2/offer/brandedfare').as('brandedFares');
     }
 
+   
     const interceptBookingConfirmation = () => {
         cy.intercept('POST', '**/api/v2/FlightConfirmation/GetBookingTicketingRes').as('bookingConfirmation');
     }
@@ -68,16 +67,12 @@ describe('Check the full OW flow with all filter checks', () => {
         cy.visit(`Flight/search?${jsonToQueryString(defalutOWpayloadQuery(...query))}`);
         cy.wait(2000);
         cy.allure().startStep('Wait for network request')
-        waitForNetworkRequest()
-        cy.allure().endStep('passed');
+        cy.allure().endStep();
     };
 
     const getFlightDetails = () => {
-        // cy.intercept('*', () => {
-        // }).as('networkRequests');
         cy.wait(2000);
         interceptBrandedFares();
-
         cy.get('.empireFlight_ListingBodycontainer').contains('Select').click({force: true}).then(() => {
             cy.wait('@brandedFares', {timeout: 30000}).then((interception) => {
                 const {body} = interception.response;
@@ -85,8 +80,6 @@ describe('Check the full OW flow with all filter checks', () => {
                 cy.allure().logStep(`Applied commercial rule IDs are ${appliedCommercialRuleIDs.join(', ')}`);
             });
         })
-
-
     };
 
     const checkFlightDetails = () => {
@@ -105,24 +98,24 @@ describe('Check the full OW flow with all filter checks', () => {
             if (tab === ' Fare Options ') {
                 cy.allure().startStep('Verify Fare Options tab has content')
                 cy.get('.empireFlight_ValueCardWarapperSame').find('p').contains('Fare Options').should('be.visible');
-                cy.allure().endStep('passed');
+                cy.allure().endStep();
             }
             if (tab === ' Flight Itinerary ') {
                 cy.allure().startStep('Verify Flight Itinerary tab has content')
                 cy.get('div.empireFlight_ItWrapper').should('be.visible');
-                cy.allure().endStep('passed');
+                cy.allure().endStep();
             }
             if (tab === ' Baggage ') {
                 cy.allure().startStep('Verify Baggage tab has content')
                 cy.get('div.empireF_bagWrapper').should('be.visible');
-                cy.allure().endStep('passed');
+                cy.allure().endStep();
             }
             if (tab === ' Fare Breakup ') {
                 cy.allure().startStep('Verify Fare Breakup tab has content')
                 cy.get('div.empireF_lightFareBreakup').should('be.visible');
-                cy.allure().endStep('passed');
+                cy.allure().endStep();
             }
-            cy.allure().endStep('passed');
+            cy.allure().endStep();
         });
 
     }
@@ -192,7 +185,7 @@ describe('Check the full OW flow with all filter checks', () => {
         cy.wait('@networkRequests', { timeout: 30000 });
 
         proceedToPayment();
-
+        interceptBookingConfirmation();
         confirmBooking();
     }
 
@@ -215,7 +208,7 @@ describe('Check the full OW flow with all filter checks', () => {
 
     const confirmBooking = () => {
         let confirmedCommercialRuleIDs = [];
-        interceptBookingConfirmation();
+
         cy.wait('@bookingConfirmation', { timeout: 30000 }).then((interception) => {
             const { body } = interception.response;
             confirmedCommercialRuleIDs = getConfirmCommercialRuleIDs(JSON.parse(body.respObj));
@@ -235,7 +228,6 @@ describe('Check the full OW flow with all filter checks', () => {
         cy.get('h3.empireFlight_confirmBookingStatus')
             .invoke('text')
             .then((text) => cy.allure().logStep(`Booking status is ${text}`));
-        // Add other assertions or logs if needed
     }
 
     const checkTripDetails = () => {
@@ -254,13 +246,13 @@ describe('Check the full OW flow with all filter checks', () => {
     it('should one way booking with filter checks', () => {
         cy.allure().startStep('Search for one way flight EK ')
         getFlights(['airlines', 'EK']);
-        // cy.allure().endStep('passed');
+        // cy.allure().endStep();
         // cy.allure().startStep('Verify flight cards has Emirates')
         // verifyFlightCards('div.empireFlight_FlightNames', /^Emirates\s/);
-        // cy.allure().endStep('passed');
+        // cy.allure().endStep();
         // cy.allure().startStep('Verify flight cards has Direct')
         // verifyCards('span.empireFlight_stopvia', 'Direct');
-        // cy.allure().endStep('passed');
+        // cy.allure().endStep();
         //
         // const filtersToApply = [
         //     {filter: ' Price ', min: 100, max: 200},
@@ -275,7 +267,7 @@ describe('Check the full OW flow with all filter checks', () => {
         //     adjustSlider(filter, min, 'min');
         //     adjustSlider(filter, max, 'max');
         //     clickFilterApply();
-        //     cy.allure().endStep('passed');
+        //     cy.allure().endStep();
         // });
         //
         // // Reset all filters
@@ -285,17 +277,17 @@ describe('Check the full OW flow with all filter checks', () => {
         // filtersToApply.forEach(({filter}) => {
         //     resetSlider(filter);
         // });
-        // cy.allure().endStep('passed');
+        // cy.allure().endStep();
         // clickFilterApply();
         cy.allure().startStep('Verify Able to select flight for booking')
         getFlightDetails();
-        cy.allure().endStep('passed');
+        cy.allure().endStep();
         cy.allure().startStep('Verify flight details are loading')
         checkFlightDetails();
-        cy.allure().endStep('passed');
+        cy.allure().endStep();
         cy.allure().startStep('Verify able to book flight')
         bookFlight();
-        cy.allure().endStep('passed');
+        cy.allure().endStep();
     });
 
 });

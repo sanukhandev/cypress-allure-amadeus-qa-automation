@@ -1,0 +1,18 @@
+[
+  {
+    "Type": "One Way",
+    "Route": "DXB-LON",
+    "Date": "11-Oct-2023|",
+    "Pax(A|C|I)": "1|0|0",
+    "Airline": "EK",
+    "Gateway": "Payfort"
+  },
+  {
+    "Type": "Round trip",
+    "Route": "DXB-LON",
+    "Date": "11-Oct-2023| 13-Oct-2023 |",
+    "Pax(A|C|I)": "1|0|0",
+    "Airline": "EK",
+    "Gateway": "Payfort"
+  }
+]
