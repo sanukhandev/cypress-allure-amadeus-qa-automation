@@ -70,7 +70,9 @@ describe('Flight Booking', () => {
         });
     }
 
-
+    const interceptBookingConfirmation = () => {
+        cy.intercept('POST', '**/api/FlightConfirmation/GetBookingTicketingRes').as('bookingConfirmation');
+    }
     const verifyFlightCards = (selector, text) => {
         cy.get(selector)
             .each(($div) => {
@@ -92,6 +94,53 @@ describe('Flight Booking', () => {
         selectDate(monthControl, month);
         selectDate(yearControl, year);
     };
+    const logDetails = (details, message) => {
+        cy.allure().logStep(`${message} ${details.join(', ')}`);
+        console.log(details, message);
+    }
+    const getConfirmCommercialRuleIDs = (body) => {
+        let ids = [];
+        body.result.orderList.forEach(order => {
+            order.pnrDetailRs.forEach(pnrDetail => {
+                pnrDetail.flightFareBreakup.forEach(flightFareBreakupItem => {
+                    flightFareBreakupItem.fareBreakup.forEach(fareBreakupItem => {
+                        ids.push(fareBreakupItem.appliedCommercialRuleID);
+                    });
+                });
+            });
+        });
+        console.log(ids, 'ids' )
+        return ids;
+    }
+    const checkBookingStatus = () => {
+        cy.get('div').contains('Booking Summary').should('be.visible');
+        cy.get('h3.empireFlight_confirmBookingStatus')
+            .invoke('text')
+            .then((text) => cy.allure().logStep(`Booking status is ${text}`));
+    }
+
+    const checkTripDetails = () => {
+        cy.get('div.empireFlight_confirmPaytxt > span > span')
+            .invoke('text')
+            .then((tripId) => cy.allure().logStep(`Trip ID is ${tripId}`));
+
+        cy.get('h4.empireFlight_confirmPnr')
+            .invoke('text')
+            .then((pnr) => cy.allure().logStep(`PNR is ${pnr}`));
+        // Add other assertions or logs if needed
+    }
+
+    const confirmBooking = () => {
+        let confirmedCommercialRuleIDs = [];
+
+        cy.wait('@bookingConfirmation', { timeout: 30000 }).then((interception) => {
+            const { body } = interception.response;
+            confirmedCommercialRuleIDs = getConfirmCommercialRuleIDs(JSON.parse(body.respObj));
+            logDetails(confirmedCommercialRuleIDs, 'Confirmed commercial rule IDs are');
+        });
+        checkBookingStatus();
+        checkTripDetails();
+    }
     const bookFlight = () => {
         const { Adults } = customerData;
         const { title, first, last, documentNumber, issuingCountry, nationality, email, countryCode, phone } = Adults[0];
@@ -118,8 +167,8 @@ describe('Flight Booking', () => {
         cy.get('button').find('div').contains('Continue to payment').click();
 
         proceedToPayment();
-        // interceptBookingConfirmation();
-        // confirmBooking();
+        interceptBookingConfirmation();
+        confirmBooking();
     }
 
     flightData.map(generatePayloadFromExcelRow).forEach((rowData) => {

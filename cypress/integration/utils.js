@@ -59,7 +59,8 @@ const generatePayloadFromExcelRow = (rowData) => {
     const [adult, child, infant] = rowData["Pax(A|C|I)"].split("|").map(Number);
     const airlines = rowData.Airline;
     const Gateway = rowData.Gateway;
-    const scenario = `Should book a flight from ${dep1} to ${ret1} on ${dtt1} for ${adult} adults, ${child} children and ${infant} infants with Airline ${airlines} payment method ${Gateway}`;
+    const tripType = rowData.Type;
+    const scenario = `Should book a ${tripType} flight from ${dep1} to ${ret1} on ${dtt1} for ${adult} adults, ${child} children and ${infant} infants with Airline ${airlines} payment method ${Gateway}`;
 
     const triptype = rowData.Type === "One Way" ? 1 : 2;
     let key = triptype === 1 ? "OW" : "IRT";

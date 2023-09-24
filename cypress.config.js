@@ -13,8 +13,9 @@ module.exports = defineConfig({
             allureWriter(on, config);
             return config;
         },
-        video: false,
         env: {
+            allure:true, // enable allure plugin
+            allureResultsPath: 'allure-results'
 
         }
 

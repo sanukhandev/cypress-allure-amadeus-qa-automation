@@ -11,19 +11,19 @@
     "beforetest": "npm run clean:folders",
     "tests": "npm run cy:run && npm run aftertest",
     "aftertest": "npm run allure:report",
-    "cy:run:headless": "cypress run --browser chrome --headless -e allure=true",
-    "run:docker": "docker run --rm -p 8080:8080 -v $(pwd)/allure_results:/usr/src/app/allure-results -v $(pwd)/cypress_videos:/usr/src/app/cypress/videos newamadeustest"
+    "cy:run:headless": "cypress run --browser chrome --headless -e allure=true"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@shelex/cypress-allure-plugin": "^2.35.2",
-    "allure": "^0.0.0",
-    "allure-commandline": "^2.21.0",
+
     "cypress": "^13.2.0"
   },
   "dependencies": {
+    "allure": "^0.0.0",
+    "allure-commandline": "^2.21.0",
+    "@shelex/cypress-allure-plugin": "^2.40.0",
     "moment": "^2.29.4",
     "xlsx": "^0.18.5"
   }
