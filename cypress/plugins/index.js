@@ -7,7 +7,7 @@ module.exports = (on, config) => {
 
         return args;
     });
-    on('after:run', (results) => {
+    on('after:run', () => {
         console.log('Generating allure report');
         const allure = require('allure-commandline');
         const generation = allure(['generate', 'allure-results', '--clean']);

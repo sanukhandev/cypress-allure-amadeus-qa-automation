@@ -1,4 +1,4 @@
-const {generatePayloadFromExcelRow, jsonToQueryString, defalutOWpayloadQuery} = require("./utils");
+const {generatePayloadFromExcelRow, jsonToQueryString} = require("./utils");
 const flightData = require("../fixtures/Flight.json");
 const customerData = require("../fixtures/sampleCustomer.json");
 const getCommercialRuleIDs = (body) => {
@@ -42,7 +42,7 @@ describe('Flight Booking', () => {
         });
     };
     const adjustSlider = (selectorBaseText, newPosition, direction) => {
-        const adjust = ($el, position) => {
+        const adjust = ($el) => {
             const elPosition = $el.position();
             cy.wrap($el).trigger('mousedown', {which: 1, pageX: elPosition.left, pageY: elPosition.top}).click();
         };
