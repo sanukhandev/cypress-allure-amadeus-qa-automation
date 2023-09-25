@@ -8,7 +8,7 @@ module.exports = defineConfig({
         baseUrl: 'https://ngtest.aos-dev.com/',
         retries: 1,
         viewportWidth: 1600,
-        chromeFlags: '--disable-gpu --no-sandbox',
+        chromeFlags: '--disable-gpu --no-sandbox --disable-dev-shm-usage',
         setupNodeEvents(on, config) {
             allureWriter(on, config);
             return config;
