@@ -1,5 +1,5 @@
 # Use Cypress's base image as your starting point
-FROM cypress/base:latest
+FROM node:16.0.0-slim
 
 RUN mkdir -p /usr/share/man/man1
 RUN apt-get clean && \
@@ -22,7 +22,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Install Cypress
-RUN npm install cypress --save-dev
+RUN npm install cypress@12.9.0 --save-dev
 
 # Copy everything else
 COPY . .
