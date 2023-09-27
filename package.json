@@ -11,7 +11,7 @@
     "beforetest": "npm run clean:folders",
     "tests": "npm run cy:run && npm run aftertest",
     "aftertest": "npm run allure:report",
-    "cy:run:headless": "DEBUG=allure:* cypress run --browser chrome --headless -e allure=true"
+    "cy:run:headless": "cypress run --browser chrome --headless -e allure=true"
   },
   "keywords": [],
   "author": "",
