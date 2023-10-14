@@ -12,7 +12,7 @@
   "ptest": "npm run clean:folders",
   "test": "npm run cy:run:headless || true",
   "posttest": "npm run kill:allure && npm run allure:report",
-  "cy:run:headless": "cypress run --headless -e allure=true --record --key 0f1c2b1e-8b1e-4f0e-9b0e-1e8b1e4f0e9b --parallel"
+  "cy:run:headless": "cypress run --headless -e allure=true  --parallel"
 }
 ,
   "keywords": [],
