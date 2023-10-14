@@ -9,6 +9,7 @@ module.exports = defineConfig({
         retries: 1,
         viewportWidth: 1600,
         chromeFlags: '--disable-gpu --no-sandbox --disable-dev-shm-usage',
+        projectId: 'allure-cypress-aos-test',
         setupNodeEvents(on, config) {
             allureWriter(on, config);
             return config;
