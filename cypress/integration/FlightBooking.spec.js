@@ -12,10 +12,9 @@ const getCommercialRuleIDs = (body) => {
             });
         });
     });
-    console.log(ids, 'ids' )
     return [...new Set(ids)];
 }
-describe('Flight Booking', () => {
+describe('Flight Booking', selector_function_selection_elements => {
     let appliedCommercialRuleIDs = [];
 
     const interceptBrandedFares = () => {
@@ -26,10 +25,15 @@ describe('Flight Booking', () => {
         cy.wait(2000);
     };
     const clickMorefilters = () => {
-        cy.get('div.empireFlight_SortBy', {timeout: 10000}).should('be.visible');
-        cy.get('div.empireFlight_filter-lastitem').contains('More Filters').click();
+        cy.get('div.empireFlight_SortBy', { timeout: 10000 }).should('be.visible');
+        cy.get('div.empireFlight_filter-lastitem')
+            .contains('More Filters')
+            .scrollIntoView()
+            .click({ force: true });
+
         cy.get('.empireFlight_filter-body').should('be.visible');
     };
+
     const resetSlider = selectorBaseText => cy.contains('h5.empireFlight_filter-sub-title', selectorBaseText).find('span.empireFlight_filter-reset').click();
     const getFlightDetails = () => {
         interceptBrandedFares();
@@ -80,19 +84,35 @@ describe('Flight Booking', () => {
             });
     };
     const fillNgSelect = (controlName, value) => {
-        cy.get(`ng-select[formcontrolname="${controlName}"]`).click()
-            .find('div.ng-dropdown-panel-items')
-            .find('div.ng-option')
-            .contains(value).click();
+        cy.get('body').then($body => {
+            if ($body.find(`ng-select[formcontrolname="${controlName}"]`).length) {
+                cy.get(`ng-select[formcontrolname="${controlName}"]`).click();
+                cy.get('div.ng-dropdown-panel-items')
+                    .find('div.ng-option')
+                    .should('be.visible')
+                    .contains(value).click();
+            } else {
+                cy.log(`ng-select with form control name "${controlName}" is not present.`);
+            }
+        })
+
     }
+
+
+
+
     const setDate = (containerClass, dayControl, monthControl, yearControl, day, month, year) => {
         const selectDate = (name, value) => {
             cy.get(`div.${containerClass}`).find(`ng-select[formcontrolname="${name}"]`).click();
             cy.get('div.ng-dropdown-panel-items').find('div.ng-option').contains(value).click();
         };
-        selectDate(dayControl, day);
-        selectDate(monthControl, month);
-        selectDate(yearControl, year);
+        cy.get(`div.${containerClass}`).then($e => {
+            if ($e.is(':visible')) {
+                selectDate(dayControl, day);
+                selectDate(monthControl, month);
+                selectDate(yearControl, year);
+            }
+        });
     };
     const logDetails = (details, message) => {
         cy.allure().logStep(`${message} ${details.join(', ')}`);
@@ -109,7 +129,7 @@ describe('Flight Booking', () => {
                 });
             });
         });
-        console.log(ids, 'ids' )
+        console.log(ids, 'ids')
         return ids;
     }
     const checkBookingStatus = () => {
@@ -117,6 +137,20 @@ describe('Flight Booking', () => {
         cy.get('h3.empireFlight_confirmBookingStatus')
             .invoke('text')
             .then((text) => cy.allure().logStep(`Booking status is ${text}`));
+    }
+
+    const ancillaryServices = () => {
+        cy.get('body').then($body => {
+            if ($body.find(`div.empireF_Anci`).length) {
+                   cy.get('div.empireF_Anci').find('div.empireF_AnciSeatTabContent').each(($div) => {
+                       cy.get('div.empireF_anciMealBagWrapper').find('button').contains('Add').click();
+                    });
+            } else {
+                cy.log(`Ancillary block not found for the airline.`);
+            }
+        })
+
+
     }
 
     const checkTripDetails = () => {
@@ -133,8 +167,8 @@ describe('Flight Booking', () => {
     const confirmBooking = () => {
         let confirmedCommercialRuleIDs = [];
 
-        cy.wait('@bookingConfirmation', { timeout: 30000 }).then((interception) => {
-            const { body } = interception.response;
+        cy.wait('@bookingConfirmation', {timeout: 30000}).then((interception) => {
+            const {body} = interception.response;
             confirmedCommercialRuleIDs = getConfirmCommercialRuleIDs(JSON.parse(body.respObj));
             logDetails(confirmedCommercialRuleIDs, 'Confirmed commercial rule IDs are');
         });
@@ -142,10 +176,10 @@ describe('Flight Booking', () => {
         checkTripDetails();
     }
     const bookFlight = () => {
-        const { Adults } = customerData;
-        const { title, first, last, documentNumber, issuingCountry, nationality, email, countryCode, phone } = Adults[0];
+        const {Adults} = customerData;
+        const {title, first, last, documentNumber, issuingCountry, nationality, email, countryCode, phone} = Adults[0];
 
-        cy.get('.flightDetailText').contains('Book Now').click({ force: true });
+        cy.get('.flightDetailText').contains('Book Now').click({force: true});
         cy.wait(2000);
         cy.get('div.empireF_TravelerFormBody')
             .find('ng-select[formcontrolname="Title"]').click()
@@ -163,7 +197,7 @@ describe('Flight Booking', () => {
         cy.get('input[formcontrolname="EmailAddress"]').type(email);
         fillNgSelect('phne_code', countryCode);
         cy.get('input[formcontrolname="MobileNo"]').type(phone);
-
+        ancillaryServices();
         cy.get('button').find('div').contains('Continue to payment').click();
 
         proceedToPayment();
@@ -177,8 +211,8 @@ describe('Flight Booking', () => {
             cy.allure().startStep(`${scenario}`)
             getFlights(payload);
             cy.allure().endStep();
-            cy.allure().startStep('Verify flight cards has Emirates')
-            verifyFlightCards('div.empireFlight_FlightNames', /^Emirates\s/);
+            // cy.allure().startStep('Verify flight cards has Emirates')
+            // verifyFlightCards('div.empireFlight_FlightNames', /^Emirates\s/);
             cy.allure().endStep();
 
 

@@ -3,17 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
- "scripts": {
-  "pre-cy:run": "node PREPARE_DATASET.js",
-  "cy:run": " npx cypress open --browser chrome  --e2e -e allure=true",
-  "clean:folders": "rm -R -f allure-report/* && rm -R -f allure-results/*",
-  "allure:report": "nohup npx allure generate allure-results --clean  -o allure-report && allure open allure-report --port 8080 --host 0.0.0.0 &",
-   "kill:allure": "/usr/bin/lsof -i :8080 | awk 'NR!=1 {print $2}' | xargs kill -9 ",
-  "test": "npm run cy:run:headless || true",
-  "posttest": "npm run kill:allure && npm run allure:report || true",
-  "cy:run:headless": "cypress run --headless -e allure=true"
-}
-,
+  "scripts": {
+    "pre-cy:run": "node PREPARE_DATASET.js",
+    "cy:run": " npx cypress open --browser chrome  --e2e -e allure=true",
+    "clean:folders": "rm -R -f allure-report/* && rm -R -f allure-results/*",
+    "allure:report": "nohup npx allure generate allure-results --clean  -o allure-report && allure open allure-report --port 8080 --host 0.0.0.0 &",
+    "kill:allure": "/usr/bin/lsof -i :8080 | awk 'NR!=1 {print $2}' | xargs kill -9 ",
+    "test": "npm run cy:run:headless || true",
+    "test:dev": "npm run cy:run --config baseUrl=https://ngtest.aos-dev.com/ || true",
+    "test:UAT": "npm run cy:run --config baseUrl=https://ngtest.preprod.amadeusonlinesuite.com/ || true",
+    "test:prod": "npm run cy:run --config baseUrl=https://ngtest.amadeusonlinesuite.com/ || true",
+    "posttest": "npm run kill:allure && npm run allure:report || true",
+    "cy:run:headless": "cypress run --headless -e allure=true"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -21,6 +23,7 @@
     "@shelex/cypress-allure-plugin": "^2.35.2",
     "allure-commandline": "^2.21.0",
     "cypress": "12.9.0",
+    "googleapis": "^127.0.0",
     "moment": "^2.29.4",
     "xlsx": "^0.18.5"
   }
