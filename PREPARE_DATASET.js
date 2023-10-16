@@ -29,3 +29,25 @@ SHEET_NAMES.forEach((SHEET_NAME) => {
 });
 
 
+
+// get google sheet data
+
+// const {getAuthToken, getSpreadSheet, getSpreadSheetValues} = require('./googleservice');
+//
+// const spreadsheetId = '1gn-CLzt63RwRsvEmwMQQ9wVQbflnwOnplMY23YTkBa8';
+// const sheetName = 'Flight';
+// const sheetName1 = 'Hotel';
+// const sheetName2 = 'Car';
+// const sheetName3 = 'Cruise';
+//
+// (async () => {
+//         getSpreadSheetValues({
+//             spreadsheetId,
+//             auth: await getAuthToken(),
+//             sheetName
+//         }).then((res) => {
+//             console.log(res.data.values);
+//
+//         })
+// })();
+
