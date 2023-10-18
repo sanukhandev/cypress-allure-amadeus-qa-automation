@@ -213,30 +213,71 @@ describe('Flight Booking', selector_function_selection_elements => {
         checkTicketNumbers();
     }
 
-    const fillCustomerDetails = () => {
-        const {Adults} = customerData;
-        const {title, first, last, documentNumber, issuingCountry, nationality, email, countryCode, phone} = Adults[0];
-        cy.get('div.empireF_TravelerFormBody')
-            .find('ng-select[formcontrolname="Title"]').click()
-            .find('div.ng-option').contains(title).click();
+    // const fillCustomerDetails = () => {
+    //     const {Adults} = customerData;
+    //     const {title, first, last, documentNumber, issuingCountry, nationality, email, countryCode, phone} = Adults[0];
+    //     cy.get('div.empireF_TravelerFormBody')
+    //         .find('ng-select[formcontrolname="Title"]').click()
+    //         .find('div.ng-option').contains(title).click();
+    //
+    //     cy.get('input[formcontrolname="FirstName"]').type(first);
+    //     cy.get('input[formcontrolname="LastName"]').type(last);
+    //
+    //     setDate('empireF_travelerDateofBirth', 'BirthDate', 'BirthMonth', 'BirthYear', '24', 'September', '1993');
+    //     cy.get('input[formcontrolname="DocumentNumber"]').type(documentNumber)
+    //     fillNgSelect('DocumentIssuingCountry', issuingCountry);
+    //     fillNgSelect('Nationality', nationality);
+    //     setDate('empireF_pasPortInfo', 'DocumentExpiryDay', 'DocumentExpiryMonth', 'DocumentExpiryYear', '10', 'January', '2028');
+    //
+    //     cy.get('input[formcontrolname="EmailAddress"]').type(email);
+    //     fillNgSelect('phne_code', countryCode);
+    //     cy.get('input[formcontrolname="MobileNo"]').type(phone);
+    // }
 
-        cy.get('input[formcontrolname="FirstName"]').type(first);
-        cy.get('input[formcontrolname="LastName"]').type(last);
+    const fillCustomerDetails = (paxInfo) => {
+        const fillPassengerDetails = (passenger, index, type) => {
+            const { title, first, last, documentNumber, issuingCountry, nationality, DateOfBirth,DateOfExpriy } = passenger;
+            const [DOB, DOM, DOY] = DateOfBirth.split('-');
+            const [DEO, DEM, DEY] = DateOfExpriy.split('-');
+            cy.get(`h4.empireF_TravelerFormTitle:contains("${type} ${index + 1}")`)
+                .parent('div.empireF_TravelerFormBody')
+                .within(() => {
+                    cy.get('ng-select[formcontrolname="Title"]').click()
+                        .find('div.ng-option').contains(title).click();
+                    cy.get('input[formcontrolname="FirstName"]').type(first);
+                    cy.get('input[formcontrolname="LastName"]').type(last);
 
-        setDate('empireF_travelerDateofBirth', 'BirthDate', 'BirthMonth', 'BirthYear', '24', 'September', '1993');
-        cy.get('input[formcontrolname="DocumentNumber"]').type(documentNumber)
-        fillNgSelect('DocumentIssuingCountry', issuingCountry);
-        fillNgSelect('Nationality', nationality);
-        setDate('empireF_pasPortInfo', 'DocumentExpiryDay', 'DocumentExpiryMonth', 'DocumentExpiryYear', '10', 'January', '2028');
+                    // I assume setDate is a custom command you have defined elsewhere
+                    setDate('empireF_travelerDateofBirth', 'BirthDate', 'BirthMonth', 'BirthYear', DOB, DOM, DOY);
+                    cy.get('input[formcontrolname="DocumentNumber"]').type(documentNumber);
+                    fillNgSelect('DocumentIssuingCountry', issuingCountry);
+                    fillNgSelect('Nationality', nationality);
+                    setDate('empireF_pasPortInfo', 'DocumentExpiryDay', 'DocumentExpiryMonth', 'DocumentExpiryYear', DEO, DEM, DEY);
 
-        cy.get('input[formcontrolname="EmailAddress"]').type(email);
-        fillNgSelect('phne_code', countryCode);
-        cy.get('input[formcontrolname="MobileNo"]').type(phone);
+                });
+        };
+        const [Adults, Children, Infants] = paxInfo.split('|');
+
+        cy.get('div.empireF_TravelerDetails').within(() => {
+            for (let i = 0; i < Adults; i++) {
+                fillPassengerDetails(customerData.Adults[i], i, 'Adult');
+            }
+            for (let i = 0; i < Children; i++) {
+                fillPassengerDetails(customerData.Children[i], i, 'Child');
+            }
+            for (let i = 0; i < Infants; i++) {
+                fillPassengerDetails(customerData.Infants[i], i, 'Infant');
+            }
+        });
+        cy.get('input[formcontrolname="EmailAddress"]').type('sanu@test.comm');
+        fillNgSelect('phne_code', 'United Arab Emirates');
+        cy.get('input[formcontrolname="MobileNo"]').type('1234567890');
     }
-    const bookFlight = () => {
+    const bookFlight = (paxInfo='') => {
         cy.get('.flightDetailText').contains('Book Now').click({force: true});
         cy.wait(2000);
-        fillCustomerDetails();
+
+        fillCustomerDetails(paxInfo);
         ancillaryServices();
         if (isAncillaryServicesAvailable) {
             verifyAncillaryServices('Traveler Details Page');
@@ -250,7 +291,8 @@ describe('Flight Booking', selector_function_selection_elements => {
     }
 
     flightData.map(generatePayloadFromExcelRow).forEach((rowData) => {
-        const {scenario, gateway, ...payload} = rowData;
+        const {scenario, gateway,paxInfo, ...payload } = rowData;
+
         it(scenario, () => {
             cy.allure().startStep(`${scenario}`)
             getFlights(payload);
@@ -289,7 +331,7 @@ describe('Flight Booking', selector_function_selection_elements => {
             getFlightDetails();
             cy.allure().endStep();
             cy.allure().startStep('Verify able to book flight')
-            bookFlight();
+            bookFlight(paxInfo);
             cy.allure().endStep();
         });
     });
