@@ -16,7 +16,7 @@ const getCommercialRuleIDs = (body) => {
 }
 describe('Flight Booking', selector_function_selection_elements => {
     let appliedCommercialRuleIDs = [];
-
+    let isAncillaryServicesAvailable = false;
     const interceptBrandedFares = () => {
         cy.intercept('POST', '**/api/v2/offer/brandedfare').as('brandedFares');
     }
@@ -25,11 +25,11 @@ describe('Flight Booking', selector_function_selection_elements => {
         cy.wait(2000);
     };
     const clickMorefilters = () => {
-        cy.get('div.empireFlight_SortBy', { timeout: 10000 }).should('be.visible');
+        cy.get('div.empireFlight_SortBy', {timeout: 10000}).should('be.visible');
         cy.get('div.empireFlight_filter-lastitem')
             .contains('More Filters')
             .scrollIntoView()
-            .click({ force: true });
+            .click({force: true});
 
         cy.get('.empireFlight_filter-body').should('be.visible');
     };
@@ -99,8 +99,6 @@ describe('Flight Booking', selector_function_selection_elements => {
     }
 
 
-
-
     const setDate = (containerClass, dayControl, monthControl, yearControl, day, month, year) => {
         const selectDate = (name, value) => {
             cy.get(`div.${containerClass}`).find(`ng-select[formcontrolname="${name}"]`).click();
@@ -142,15 +140,28 @@ describe('Flight Booking', selector_function_selection_elements => {
     const ancillaryServices = () => {
         cy.get('body').then($body => {
             if ($body.find(`div.empireF_Anci`).length) {
-                   cy.get('div.empireF_Anci').find('div.empireF_AnciSeatTabContent').each(($div) => {
-                       cy.get('div.empireF_anciMealBagWrapper').find('button').contains('Add').click();
-                    });
+                cy.get('div.empireF_Anci').find('div.empireF_AnciSeatTabContent').each(($div) => {
+                    cy.get('div.empireF_anciMealBagWrapper').find('button').contains('Add').click();
+                    isAncillaryServicesAvailable = true;
+                });
             } else {
                 cy.log(`Ancillary block not found for the airline.`);
             }
         })
+    }
 
-
+    const verifyAncillaryServices = (context = '') => {
+        cy.allure().logStep(`Ancillary services are available on ${context}`);
+        cy.allure().startStep(`check ancillary services is added to fare total on ${context}`)
+        cy.get('div.empireF_TravelerDetailsText.empireF_TravelerDetailVatTxt').then(($div) => {
+            const h4Texts = $div.find('h4').map((index, el) => Cypress.$(el).text()).get();
+            if (h4Texts.includes('Baggages')) {
+                cy.allure().endStep();
+            } else {
+                cy.allure().endStep();
+                cy.allure().logStep(`Ancillary services is not added to fare total on ${context}`);
+            }
+        });
     }
 
     const checkTripDetails = () => {
@@ -164,6 +175,30 @@ describe('Flight Booking', selector_function_selection_elements => {
         // Add other assertions or logs if needed
     }
 
+    const checkTicketNumbers = () => {
+        cy.get('.empireFlight_Commonhead:contains("Traveller Details")')
+            .parents('.empireFlight_CommonCard') // Navigate up to the common card of traveller details
+            .find('td:contains("Ticket No.") + td') // Find the TD after "Ticket No."
+            .invoke('text') // Get the text content of that td
+            .then(ticketNumber => {
+                cy.allure().logStep(`Ticket number is ${ticketNumber}`);
+            });
+    }
+
+    const checkForAddons = () => {
+        cy.allure().logStep(`Check for addons`);
+        cy.allure().startStep(`Check for addons`);
+        cy.get('body').find('div.empireF_Anci').then(($div) => {
+            if ($div) {
+                cy.allure().endStep();
+                cy.allure().logStep(`Addons are available`);
+            } else {
+                cy.allure().endStep();
+                cy.allure().logStep(`Addons are not available`);
+            }
+        })
+    }
+
     const confirmBooking = () => {
         let confirmedCommercialRuleIDs = [];
 
@@ -173,14 +208,14 @@ describe('Flight Booking', selector_function_selection_elements => {
             logDetails(confirmedCommercialRuleIDs, 'Confirmed commercial rule IDs are');
         });
         checkBookingStatus();
+        checkForAddons();
         checkTripDetails();
+        checkTicketNumbers();
     }
-    const bookFlight = () => {
+
+    const fillCustomerDetails = () => {
         const {Adults} = customerData;
         const {title, first, last, documentNumber, issuingCountry, nationality, email, countryCode, phone} = Adults[0];
-
-        cy.get('.flightDetailText').contains('Book Now').click({force: true});
-        cy.wait(2000);
         cy.get('div.empireF_TravelerFormBody')
             .find('ng-select[formcontrolname="Title"]').click()
             .find('div.ng-option').contains(title).click();
@@ -197,8 +232,17 @@ describe('Flight Booking', selector_function_selection_elements => {
         cy.get('input[formcontrolname="EmailAddress"]').type(email);
         fillNgSelect('phne_code', countryCode);
         cy.get('input[formcontrolname="MobileNo"]').type(phone);
+    }
+    const bookFlight = () => {
+        cy.get('.flightDetailText').contains('Book Now').click({force: true});
+        cy.wait(2000);
+        fillCustomerDetails();
         ancillaryServices();
+        if (isAncillaryServicesAvailable) {
+            verifyAncillaryServices('Traveler Details Page');
+        }
         cy.get('button').find('div').contains('Continue to payment').click();
+        cy.wait(2000);
 
         proceedToPayment();
         interceptBookingConfirmation();
