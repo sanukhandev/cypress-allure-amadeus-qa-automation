@@ -93,7 +93,8 @@ const generatePayloadFromExcelRow = (rowData) => {
         cl3: "",
         mgcc: "IN",
         scenario: scenario,
-        gateway: Gateway
+        gateway: Gateway,
+        paxInfo: rowData["Pax(A|C|I)"]
     };
 }
 
