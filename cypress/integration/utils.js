@@ -98,6 +98,12 @@ const generatePayloadFromExcelRow = (rowData) => {
     };
 }
 
+const filtersToApply = [
+    {filter: ' Price ', min: 100, max: 200},
+    {filter: ' Departure Timing ', min: 100, max: 200},
+    {filter: ' Departure Trip Duration ', min: 100, max: 200},
+    {filter: ' Arrival Timing ', min: 100, max: 200},
+];
 
 
 
@@ -106,5 +112,6 @@ module.exports = {
     jsonToQueryString,
     getNewDate,
     defalutOWpayloadQuery,
-    generatePayloadFromExcelRow
+    generatePayloadFromExcelRow,
+    filtersToApply
 }
