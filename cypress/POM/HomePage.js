@@ -138,6 +138,14 @@ class HomePage extends BasePage {
         return cy.get('#mat-mdc-checkbox-3');
     }
 
+    validateAdvanceSearchOptions() {
+        this.getFlexibleDatesCheckbox().should('be.visible');
+        this.getPreferredAirlineDropdown().should('be.visible');
+        this.getBaggageOnlyCheckbox().should('be.visible');
+        this.getDirectFlightsCheckbox().should('be.visible');
+        this.getRefundableCheckbox().should('be.visible');
+    }
+
 }
 
 export default HomePage;

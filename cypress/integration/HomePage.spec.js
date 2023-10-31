@@ -161,10 +161,20 @@ describe("Home Page", () => {
     });
 
 
+    it('should be able click and validate advance search options', () => {
 
+        cy.allure().startStep("Click on Advance Search button");
+        homePage.getAdvancedSearchButton().click();
+        cy.allure().endStep();
 
+        cy.allure().startStep("Validate Advance Search options");
+        homePage.validateAdvanceSearchOptions();
+        cy.allure().endStep();
 
-
+        cy.allure().startStep("Click on Advance Search button");
+        homePage.getAdvancedSearchButton().click();
+        cy.allure().endStep();
+    });
 
 
 });
