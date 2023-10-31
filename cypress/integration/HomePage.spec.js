@@ -5,7 +5,7 @@ describe("Home Page", () => {
 
     beforeEach(() => {
         cy.visit("/flight?mgcc=IN");
-        cy.wait(5000); // Consider dynamic waits based on elements or network responses
+        cy.wait(5000); //TODO  dynamic waits based on elements or network responses
     });
 
     it("should display all key sections of the home page", () => {
@@ -128,7 +128,7 @@ describe("Home Page", () => {
         homePage.getMultiCity3SegmentTab().should('have.class', 'mdc-tab--active');
         cy.allure().endStep();
 
-        cy.allure().startStep("Validate inputs for multi-city search");
+        cy.allure().startStep("Validate inputs for multi-city 3segment search");
         homePage.validateInputs(2);
         cy.allure().endStep();
 
@@ -147,8 +147,9 @@ describe("Home Page", () => {
         homePage.getMultiCityTab().should('have.class', 'mdc-tab--active');
         cy.allure().endStep();
 
+        homePage.getAddMoreButton().click()
         cy.allure().startStep("Validate inputs for multi-city search");
-        homePage.validateInputs(2);
+        homePage.validateInputs(3);
         cy.allure().endStep();
 
         cy.allure().startStep("Verify 'Traveler and Class' panel is visible");
