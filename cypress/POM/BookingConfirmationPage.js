@@ -15,6 +15,11 @@ class BookingConfirmationPage extends BasePage {
 
     interceptBookingConfirmation() {
         cy.intercept('POST', '**/api/FlightConfirmation/GetBookingTicketingRes').as('bookingConfirmation');
+
+        cy.wait('@bookingConfirmation', {timeout: 30000}).then((interception) => {
+            const {body} = interception.response;
+            this.getConfirmCommercialRuleIDs(body);
+        });
     }
 
     getConfirmCommercialRuleIDs(body) {

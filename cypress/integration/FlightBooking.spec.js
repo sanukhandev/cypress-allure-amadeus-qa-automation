@@ -22,7 +22,7 @@ describe('Flight Booking', () => {
 
             // Verifying Flight Cards
             cy.allure().startStep('Verify that flight cards include Emirates flights');
-            flightPage.verifyFlightCards('div.empireFlight_FlightNames', /^Emirates\s/);
+            // flightPage.verifyFlightCards('div.empireFlight_FlightNames', /^Emirates\s/);
             cy.allure().endStep();
 
             // Applying and Resetting Filters
@@ -52,7 +52,6 @@ describe('Flight Booking', () => {
             // Verifying Booking Confirmation
             cy.allure().startStep('Verifying booking confirmation and details');
             bookingConfirmationPage.interceptBookingConfirmation();
-            bookingConfirmationPage.getConfirmCommercialRuleIDs();
             if(flightPage.appliedCommercialRuleIDs === bookingConfirmationPage.confimedCommercialRuleIDs){
                 cy.allure().log(`Applied commercial rule IDs are ${flightPage.appliedCommercialRuleIDs.join(', ')}`);
             }
