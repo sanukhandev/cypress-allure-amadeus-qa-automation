@@ -114,6 +114,30 @@ class HomePage extends BasePage {
         }
 
     }
+
+    getAdvancedSearchButton() {
+        return cy.get('a.AdvSearchOpt-btn');
+    }
+
+    getFlexibleDatesCheckbox() {
+        return cy.get('#mat-mdc-checkbox-1');
+    }
+
+    getPreferredAirlineDropdown() {
+        return cy.get('ng-select.empireF_AdvSearOpt');
+    }
+    getBaggageOnlyCheckbox() {
+        return cy.get('#mat-mdc-checkbox-4');
+    }
+
+    getDirectFlightsCheckbox() {
+        return cy.get('#mat-mdc-checkbox-2');
+    }
+
+    getRefundableCheckbox() {
+        return cy.get('#mat-mdc-checkbox-3');
+    }
+
 }
 
 export default HomePage;
