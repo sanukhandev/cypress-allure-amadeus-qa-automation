@@ -145,6 +145,39 @@ class HomePage extends BasePage {
         this.getDirectFlightsCheckbox().should('be.visible');
         this.getRefundableCheckbox().should('be.visible');
     }
+    getDropDown(selector = 'div.dropdown-menu.show') {
+        return cy.get(selector);
+    }
+
+
+    setTypeAheadInput(fieldInput, value) {
+        fieldInput.type(value);
+        this.getDropDown().contains('.dropdown-item', value).should('be.visible').click();
+    }
+
+    setOrigin(origin) {
+        cy.allure().startStep(`Click on Origin Input and type '${origin}'`);
+        this.setTypeAheadInput(this.getOriginInput(), origin);
+        cy.allure().endStep();
+    }
+
+    setDestination(destination) {
+        cy.allure().startStep(`Click on Destination Input and type '${destination}'`);
+        this.setTypeAheadInput(this.getDestinationInput(), destination);
+        cy.allure().endStep();
+    }
+
+    setMCOrigin(origin,index=0) {
+        cy.allure().startStep(`Click on Origin Input and type '${origin}'`);
+        this.setTypeAheadInput(this.getMCOriginInput(index), origin);
+        cy.allure().endStep();
+    }
+
+    setMCDestination(destination,index=0) {
+        cy.allure().startStep(`Click on Destination Input and type '${destination}'`);
+        this.setTypeAheadInput(this.getMCDestinationInput(index), destination);
+        cy.allure().endStep();
+    }
 
 }
 

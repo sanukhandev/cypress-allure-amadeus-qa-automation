@@ -178,4 +178,45 @@ describe("Home Page", () => {
     });
 
 
+    it('should input DXB and select Dubai International Airport from dropdown', () => {
+        const homePage = new HomePage();
+        cy.allure().startStep("Click Round Trip Tab input DXB and select Dubai International Airport from dropdown");
+        homePage.setOrigin('DXB');
+        homePage.setDestination('LON');
+        cy.allure().endStep();
+
+        cy.allure().startStep("Click One Way Tab input DXB and select Dubai International Airport from dropdown");
+
+        homePage.clickOneWayTab();
+        homePage.setOrigin('DXB');
+        homePage.setDestination('LON');
+
+        cy.allure().endStep();
+
+        cy.allure().startStep("Click Multi City Tab input DXB and select Dubai International Airport from dropdown");
+
+        homePage.clickMultiCityTab();
+        homePage.setMCOrigin('DXB', 0);
+        homePage.setMCDestination('LON', 0);
+        homePage.setMCOrigin('DXB', 1);
+        homePage.setMCDestination('LON', 1);
+
+        homePage.getAddMoreButton().click()
+        homePage.setMCOrigin('DXB', 2);
+        homePage.setMCDestination('LON', 2);
+
+        cy.allure().endStep();
+
+        cy.allure().startStep("Click Multi City 3 Segment Tab input DXB and select Dubai International Airport from dropdown");
+
+        homePage.clickMultiCity3SegmentTab();
+        homePage.setMCOrigin('DXB', 0);
+        homePage.setMCDestination('LON', 0);
+        homePage.setMCOrigin('DXB', 1);
+        homePage.setMCDestination('LON', 1);
+
+        cy.allure().endStep();
+    });
+
+
 });
