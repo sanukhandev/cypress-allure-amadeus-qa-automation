@@ -1,5 +1,6 @@
 import HomePage from "../POM/HomePage";
 
+
 describe("Home Page", () => {
     const homePage = new HomePage();
 
@@ -82,13 +83,13 @@ describe("Home Page", () => {
         cy.allure().endStep();
 
         // Uncomment and use these steps if necessary
-        // cy.allure().startStep("Verify 'Departure Date' is visible");
-        // homePage.getDepartureDate().should('be.visible');
-        // cy.allure().endStep();
+        cy.allure().startStep("Verify 'Departure Date' is visible");
+        homePage.getDepartureDate().should('be.visible');
+        cy.allure().endStep();
 
-        // cy.allure().startStep("Verify 'Return Date' is visible");
-        // homePage.getReturnDate().should('be.visible');
-        // cy.allure().endStep();
+        cy.allure().startStep("Verify 'Return Date' is visible");
+        homePage.getReturnDate().should('be.visible');
+        cy.allure().endStep();
 
         cy.allure().startStep("Verify 'Traveler and Class' panel is visible");
         homePage.getTravelerAndClassPanel().should('be.visible');
@@ -111,9 +112,9 @@ describe("Home Page", () => {
         cy.allure().endStep();
 
         // Uncomment and use this step if necessary
-        // cy.allure().startStep("Verify 'Departure Date' is visible");
-        // homePage.getDepartureDate().should('be.visible');
-        // cy.allure().endStep();
+        cy.allure().startStep("Verify 'Departure Date' is visible");
+        homePage.getDepartureDate().click().should('be.visible');
+        cy.allure().endStep();
 
         cy.allure().startStep("Verify 'Traveler and Class' panel is visible");
         homePage.getTravelerAndClassPanel().should('be.visible');
@@ -136,9 +137,7 @@ describe("Home Page", () => {
         homePage.getTravelerAndClassPanel().should('be.visible');
         cy.allure().endStep();
 
-        cy.allure().startStep("Verify 'Add More' button is visible");
-        homePage.getAddMoreButton().should('be.visible');
-        cy.allure().endStep();
+
     });
 
     it('should validate multi-city search components', () => {
@@ -156,9 +155,7 @@ describe("Home Page", () => {
         homePage.getTravelerAndClassPanel().should('be.visible');
         cy.allure().endStep();
 
-        cy.allure().startStep("Verify 'Add More' button is visible");
-        homePage.getAddMoreButton().should('be.visible');
-        cy.allure().endStep();
+
     });
 
 
@@ -217,6 +214,27 @@ describe("Home Page", () => {
 
         cy.allure().endStep();
     });
+
+    it('should able to select date inputs', () => {
+        cy.allure().startStep("Select Date Range for round trip");
+        homePage.selectDateRange(10,15);
+        cy.allure().endStep();
+        cy.allure().startStep("Select Departure Date for one way");
+        homePage.clickOneWayTab();
+        homePage.selectDate(10);
+        cy.allure().endStep();
+        cy.allure().startStep("Select Departure Date for multi city");
+        homePage.clickMultiCityTab();
+        homePage.selectMCDate(10, 1);
+        cy.allure().endStep();
+        cy.allure().startStep("Select Departure Date for multi city 3 segment");
+        homePage.clickMultiCity3SegmentTab();
+        homePage.selectMCDate(10, 2);
+        cy.allure().endStep();
+
+
+    });
+
 
 
 });

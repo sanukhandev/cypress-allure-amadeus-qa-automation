@@ -1,6 +1,14 @@
 import BasePage from "./BasePage";
+import 'cypress-real-events/support';
 
 class HomePage extends BasePage {
+
+    constructor() {
+        super();
+        this.selector = 'empire-advanced-search';
+
+    }
+
 
     getHeader() {
         return cy.get("header.empireHeadheader");
@@ -35,6 +43,7 @@ class HomePage extends BasePage {
         // Assuming the sports button has the same class as flight
         return cy.get('.empireF_tripFlight').eq(1);
     }
+
     getRoundTripTab() {
         return cy.get('div.mat-mdc-tab-labels').contains('span', 'Round Trip').closest('.mdc-tab');
     }
@@ -45,11 +54,15 @@ class HomePage extends BasePage {
     }
 
     getMultiCity3SegmentTab() {
-        return cy.get('div.mat-mdc-tab-labels').contains('span', 'Multi City (3 Segment)').closest('.mdc-tab');
+        return cy.get('div.mat-mdc-tab-labels').find('span').filter((index, el) => {
+            return el.textContent.trim() === 'Multi City (3 Segment)';
+        }).closest('.mdc-tab');
     }
 
     getMultiCityTab() {
-        return cy.get('div.mat-mdc-tab-labels').contains('span', 'Multi City').closest('.mdc-tab');
+        return cy.get('div.mat-mdc-tab-labels').find('span').filter((index, el) => {
+            return el.textContent.trim() === 'Multi City';
+        }).closest('.mdc-tab');
     }
 
     // Methods to click on the tabs
@@ -62,42 +75,43 @@ class HomePage extends BasePage {
     }
 
     clickMultiCity3SegmentTab() {
-        this.getMultiCity3SegmentTab().click();
+        this.getMultiCity3SegmentTab().click({multiple: true});
     }
 
     clickMultiCityTab() {
-        this.getMultiCityTab().click();
+        this.getMultiCityTab().click({multiple: true});
     }
 
     getOriginInput() {
         return cy.get('.empireFlight_origin input')
     }
+
     getDestinationInput() {
         return cy.get('.empireFlight_depart input')
     }
 
     getDepartureDate() {
-        return cy.get('.empireFlight_searchdate').find('p.empireFlight_searchdate-form')
+        return cy.get('label.empireFlight_searchdate-form')
     }
 
     getReturnDate() {
-        return cy.get('.empireFlight_searchdate').find('label.empireFlight_searchdate-to')
+        return cy.get('label.empireFlight_searchdate-to')
     }
 
-    getMCOriginInput(index =0) {
+    getMCOriginInput(index = 0) {
         return cy.get(`input#DropToOrigin${index}`)
     }
 
 
-
-    getMCDestinationInput(index =0) {
+    getMCDestinationInput(index = 0) {
         return cy.get(`input#DropFromDepart${index}`)
     }
 
 
-    getMCDateInput(index =0) {
+    getMCDateInput(index = 0) {
         return cy.get(`input#calenderDynamic${index}`)
     }
+
     getTravelerAndClassPanel() {
         return cy.get('.empireF_searchtravellerWrapper');
     }
@@ -126,6 +140,7 @@ class HomePage extends BasePage {
     getPreferredAirlineDropdown() {
         return cy.get('ng-select.empireF_AdvSearOpt');
     }
+
     getBaggageOnlyCheckbox() {
         return cy.get('#mat-mdc-checkbox-4');
     }
@@ -145,6 +160,7 @@ class HomePage extends BasePage {
         this.getDirectFlightsCheckbox().should('be.visible');
         this.getRefundableCheckbox().should('be.visible');
     }
+
     getDropDown(selector = 'div.dropdown-menu.show') {
         return cy.get(selector);
     }
@@ -167,17 +183,38 @@ class HomePage extends BasePage {
         cy.allure().endStep();
     }
 
-    setMCOrigin(origin,index=0) {
+    setMCOrigin(origin, index = 0) {
         cy.allure().startStep(`Click on Origin Input and type '${origin}'`);
         this.setTypeAheadInput(this.getMCOriginInput(index), origin);
         cy.allure().endStep();
     }
 
-    setMCDestination(destination,index=0) {
+    setMCDestination(destination, index = 0) {
         cy.allure().startStep(`Click on Destination Input and type '${destination}'`);
         this.setTypeAheadInput(this.getMCDestinationInput(index), destination);
         cy.allure().endStep();
     }
+
+    selectDateRange(departureDate, arrivalDate) {
+        this.getDepartureDate().click();
+        cy.get('table.p-datepicker-calendar').first().contains(departureDate).click();
+        this.getReturnDate().click();
+        cy.get('table.p-datepicker-calendar').last().contains(arrivalDate).click();
+    }
+
+    selectDate(date) {
+        this.getDepartureDate().click();
+        cy.get('table.p-datepicker-calendar').last().contains(date).click();
+    }
+
+    selectMCDate(date, index = 0) {
+        cy.get('.empireFlight_MCsearchdate-form').each(($el, index, $list) => {
+            cy.wrap($el).click();
+            cy.get('table.p-datepicker-calendar').last().contains(date).click();
+            date+=2;
+        });
+    }
+
 
 }
 

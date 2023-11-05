@@ -23,6 +23,7 @@
     "@shelex/cypress-allure-plugin": "^2.35.2",
     "allure-commandline": "^2.21.0",
     "cypress": "12.9.0",
+    "cypress-real-events": "^1.11.0",
     "googleapis": "^127.0.0",
     "moment": "^2.29.4",
     "xlsx": "^0.18.5"
