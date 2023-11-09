@@ -3,15 +3,15 @@
     "Type": "One Way",
     "Route": "DXB-LON",
     "Date": "11-Nov-2023|",
-    "Pax(A|C|I)": "2|1|0",
-    "Airline": "RJ",
+    "Pax(A|C|I)": "9|9|9",
+    "Airline": "EK",
     "Gateway": "Payfort"
   },
   {
     "Type": "Round trip",
     "Route": "DXB-LON",
     "Date": "11-Nov-2023| 13-Nov-2023 |",
-    "Pax(A|C|I)": "3|2|1",
+    "Pax(A|C|I)": "1|0|0",
     "Airline": "EK",
     "Gateway": "Payfort"
   }
