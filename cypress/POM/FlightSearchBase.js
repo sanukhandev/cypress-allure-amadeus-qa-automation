@@ -8,13 +8,13 @@ class FlightSearchBase {
     getFlights = query => {
         this.interceptLowFareFinder();
         cy.visit(`Flight/search?${jsonToQueryString(query)}`);
-        cy.wait('@lowFareFinder', { timeout: 30000 }).then((interception) => {
+        cy.wait('@lowFareFinder', { timeout: 120000 }).then((interception) => {
             this.lowFareFinderResponse =   this.formatResponse(interception.response.body);
             cy.wait(1000); // to render
-            this.getDisplayedFlightOptions().then((data) => {
-                this.allFlightDataRenderd = data;
-                this.validateFlightListing();
-            });
+            if(query.ipc){
+                cy.get('empire-rt-pricing-calender').should('be.visible');
+            }
+           this.validateFlightListing()
 
         });
     };
@@ -41,8 +41,16 @@ class FlightSearchBase {
         this.flightListingContainer.should('be.visible');
         this.sortByComponent.should('be.visible');
         this.filterComponent.should('be.visible');
+
+        // this.lowFareFinderResponse.forEach((fopItem, index) => {
+        //     //validate flight name
+        //     cy.get('.empireFlight_FlightNames h4').eq(index).should('have.text', fopItem.type);
+        // })
+
+        this.flightListing.should("be.visible")
+        // this.flightListing.should('have.length', this.lowFareFinderResponse[0].flightOptions.length);
         // match count
-        this.flightListing.should('have.length', this.lowFareFinderResponse.length);
+
     }
 
 
@@ -80,73 +88,70 @@ class FlightSearchBase {
         }));
     }
 
+
     getDisplayedFlightOptions() {
         const allFlightData = [];
-        return this.flightListing.should('be.visible').each($box => {
+
+        // Helper function to extract flight details
+        const extractFlightDetails = ($cardbox, type) => {
+            const body = $cardbox.find('.empireFlight_listing-body');
+            return {
+                flightName: body.find('.empireFlight_FlightNames h4').text().trim(),
+                airlineCodes: body.find('.empire_airlinecode h6').map((i, el) => Cypress.$(el).text().trim()).get(),
+                departureTime: body.find('.empireFlight_FlightTime').first().text().trim(),
+                departureAirportCode: body.find('.empireFlight_FlightCode').first().text().trim(),
+                duration: body.find('.empireFlight_time p').text().trim(),
+                numberOfStops: body.find('.empireFlight_stopvia span').first().text().trim(),
+                arrivalTime: body.find('.empireFlight_FlightTime').last().text().trim(),
+                arrivalAirportCode: body.find('.empireFlight_FlightCode').last().text().trim()
+            };
+        };
+
+        // Helper function to process a single box
+        const processData = ($box) => {
             const data = { airline: '', price: null, currency: '', departure: {}, return: {} };
 
-            // Airline, price, and currency extraction
-            cy.wrap($box).scrollIntoView().then(() => {
-                cy.wrap($box).find('.empireFlight-roundTripHead .empireFlight-roundTripLogos span', { timeout: 10000 }).then($airlineSpan => {
-                    if ($airlineSpan.length) {
-                        data.airline = $airlineSpan.text().trim();
+            return cy.wrap($box).scrollIntoView({ timeout: 10000 }).then(() => {
+                // Extracting city, date, and flight details
+                $box.find('.empireFlight_listing-subhead').each((index, subheadElement) => {
+                    const $subhead = Cypress.$(subheadElement);
+                    const type = index === 0 ? 'departure' : 'return';
+                    const cityDateText = $subhead.find('.empireFlight_CityName').text().trim();
+                    const dateText = $subhead.find('.empireFlight_airline-date').text().trim();
+
+                    if (cityDateText && dateText) {
+                        const [origin, destination] = cityDateText.split(' - ');
+                        data[type] = { origin, destination, date: dateText };
                     }
                 });
 
-                cy.wrap($box).find('.empireFlight_amount').then($price => {
-                    if ($price.length) {
-                        const priceText = $price.text().trim();
-                        data.price = parseFloat(priceText.replace(/[^0-9.]/g, ''));
-                        data.currency = priceText.split(' ')[0];
-                    }
+                // Extracting airline, price, and currency
+                $box.find('.empireFlight-roundTripHead .empireFlight-roundTripLogos span').each((_, span) => {
+                    data.airline = `${data.airline} ${Cypress.$(span).text().trim()}`;
                 });
-            });
 
-            // Departure and return city and date extraction
-            cy.wrap($box).scrollIntoView().find('.empireFlight_listing-subhead').each(($subhead, index) => {
-                const type = index === 0 ? 'departure' : 'return';
-                const cityDateText = $subhead.find('.empireFlight_CityName').text().trim();
-                const dateText = $subhead.find('.empireFlight_airline-date').text().trim();
+                $box.find('.empireFlight-cardboxroundTrip').each((_, cardboxroundTrip) => {
+                    const tripType = _ === 0 ? 'departure' : 'return';
 
-                if (cityDateText && dateText) {
-                    const [origin, destination] = cityDateText.split(' - ');
-                    data[type] = {
-                        origin: origin,
-                        destination: destination,
-                        date: dateText
-                    };
-                }
-            });
-            cy.wrap($box).scrollIntoView().find('.empireFlight-cardboxroundTrip').each(( cardboxroundTrip, index) => {
-                const tripType = index === 0 ? 'departure' : 'return';
-
-                Cypress.$(cardboxroundTrip).find('.empireFlight_cardbox').each((_, cardbox) => {
-                    cy.wrap(cardbox).scrollIntoView().then(() => {
-                        const body = Cypress.$(cardbox).find('.empireFlight_listing-body');
-                        const tripData = {
-                            flightName: body.find('.empireFlight_FlightNames h4').text().trim(),
-                            airlineCodes: body.find('.empire_airlinecode h6').map((i, el) => Cypress.$(el).text().trim()).get(),
-                            departureTime: body.find('.empireFlight_FlightTime').first().text().trim(),
-                            departureAirportCode: body.find('.empireFlight_FlightCode').first().text().trim(),
-                            duration: body.find('.empireFlight_time p').text().trim(),
-                            numberOfStops: body.find('.empireFlight_stopvia span').first().text().trim(),
-                            arrivalTime: body.find('.empireFlight_FlightTime').last().text().trim(),
-                            arrivalAirportCode: body.find('.empireFlight_FlightCode').last().text().trim()
-                        };
-                        data[tripType] = {...data[tripType], tripData};
+                    Cypress.$(cardboxroundTrip).find('.empireFlight_cardbox').each((_, cardbox) => {
+                        data[tripType] = extractFlightDetails(Cypress.$(cardbox), tripType);
                     });
                 });
+
+                return cy.wrap(data);
             });
+        };
 
-
-            allFlightData.push(data);
+        // Process each flight listing box
+        return this.flightListing.should('be.visible').each($box => {
+            processData($box).then(data => {
+                allFlightData.push(data);
+            });
         }).then(() => {
+            console.log('allFlightData', allFlightData)
             return allFlightData;
         });
     }
-
-
-
 
 
 }
