@@ -8,7 +8,7 @@ const paxSearchData = [
     { adult: "1", child: "0", infant: "1" }, // One Adult, One Infant
     { adult: "1", child: "1", infant: "1" }  // One Adult, One Child, One Infant
 ];
-const airlinesData = ["EK", "EY", "QR", "BA"];
+const airlinesData = ["EK", "EY", "QR", "BA","RJ"];
 describe('Flight Search RT', () => {
 
     const owFlightSearch = new OWflightSearchPage()
