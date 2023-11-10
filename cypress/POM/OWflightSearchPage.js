@@ -1,6 +1,6 @@
 import FlightSearchBase from "./FlightSearchBase";
 
-class RTflightSearchPage extends FlightSearchBase{
+class OWflightSearchPage extends FlightSearchBase{
 
     constructor() {
         super();
@@ -11,12 +11,8 @@ class RTflightSearchPage extends FlightSearchBase{
         "ret1": "LHR",
         "dtt1": "23-Nov-2023",
         "cl1": "Y",
-        "dep2": "LHR",
-        "ret2": "DXB",
-        "dtt2": "18-Dec-2023",
-        "cl2": "Y",
         "mgcc": "IN",
-        "triptype": "2",
+        "triptype": "1",
         "adult": "1",
         "child": "1",
         "infant": "1",
@@ -140,4 +136,4 @@ class RTflightSearchPage extends FlightSearchBase{
 
 }
 
-export default RTflightSearchPage;
+export default OWflightSearchPage;
