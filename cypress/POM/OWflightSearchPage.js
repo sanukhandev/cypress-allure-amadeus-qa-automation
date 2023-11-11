@@ -18,7 +18,7 @@ class OWflightSearchPage extends FlightSearchBase{
         "infant": "1",
         "direct": "true",
         "baggage": "true",
-        "key": "IRT",
+        "key": "OW",
         "airlines": "EK",
         "ref": "true",
         "langcode": "EN",
@@ -26,6 +26,10 @@ class OWflightSearchPage extends FlightSearchBase{
         "ipc": "true"
     }
 
+
+    isResponseVisible() {
+        this.flightListingContainer.should('be.visible');
+    }
 
     makeSearchWithPax = (adult,child,infant) => {
         const request = {

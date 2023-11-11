@@ -29,7 +29,11 @@ class RTflightSearchPage extends FlightSearchBase{
         "curr": "AED",
         "ipc": "true"
     }
+    get flightListingContainer() { return cy.get('.empireFlight_ListingBodycontainer'); }
 
+    isResponseVisible() {
+        this.flightListingContainer.should('be.visible');
+    }
 
     makeSearchWithPax = (adult,child,infant) => {
         const request = {
