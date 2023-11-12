@@ -13,7 +13,8 @@ class FlightSearchBase {
         cy.wait('@lowFareFinder', { timeout: 120000 }).then((interception) => {
             this.lowFareFinderResponse =   this.formatResponse(interception.response.body);
             cy.wait(1000); // to render
-            this.scrollToBottomUntilCountMatched('.empireFlight_listing-card',Object.keys(this.lowFareFinderResponse).length)
+            const QUERY_SELECTOR = query.triptype === "1"?'.empireFlight_listing-card': ".empireFlight_main-box-listing"
+            this.scrollToBottomUntilCountMatched(QUERY_SELECTOR,Object.keys(this.lowFareFinderResponse).length)
             cy.wait(1000); // to render
             // this.allFlightDataRenderd = this.getDisplayedFlightOptions()
             if(query.ipc){

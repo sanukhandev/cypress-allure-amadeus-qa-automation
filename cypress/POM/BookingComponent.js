@@ -16,7 +16,6 @@ class BookingComponent extends BasePage {
 
     bookFlight = () => {
         cy.get(BookingComponent.BOOK_NOW_BTN_SELECTOR).click({force: true});
-        cy.wait('@networkCall'); // Assuming you have set up an alias for the network call
         this.fillCustomerDetails();
         this.checkAndHandleAncillaryServices();
     }
@@ -53,6 +52,10 @@ class BookingComponent extends BasePage {
 
     fillCustomerDetails = () => {
         cy.get(BookingComponent.TRAVELER_FORM_BODY_SELECTOR).each(($body, index) => {
+
+            // check in body that field is visbile by selector
+
+
             cy.wrap($body).within(() => {
                 cy.get('h4.empireF_TravelerFormTitle').invoke('text').then((text) => {
                     const passengerType = this.determinePassengerType(text);
@@ -93,8 +96,8 @@ class BookingComponent extends BasePage {
         this.fillNgSelect('Nationality', nationality);
 
         // Assuming you have a method to fill in date fields
-        this.setDate('BirthDate', DOBDay, DOBMonth, DOBYear);
-        this.setDate('DocumentExpiryDate', expiryDay, expiryMonth, expiryYear);
+        this.setDate('empireF_travelerDateofBirth','BirthDate','BirthMonth','BirthYear', DOBDay, DOBMonth, DOBYear);
+        this.setDate('VisaIssueWrapper','DocumentExpiryDay','DocumentExpiryMonth',"DocumentExpiryYear", expiryDay, expiryMonth, expiryYear);
     }
 
 

@@ -24,18 +24,22 @@ class BasePage {
         });
     };
 
-     setDate = (containerClass, dayControl, monthControl, yearControl, day, month, year) => {
+    setDate = (containerClass, dayControl, monthControl, yearControl, year, month, day) => {
         const selectDate = (name, value) => {
-            cy.get(`div.${containerClass}`).find(`ng-select[formcontrolname="${name}"]`).click();
-            cy.get('div.ng-dropdown-panel-items').find('div.ng-option').contains(value).click();
+            const selector = `div.${containerClass} ng-select[formcontrolname="${name}"]`;
+            cy.get(selector).click();
+            cy.get('div.ng-dropdown-panel-items').find('div.ng-option').should('be.visible').contains(value).click({force: true});
         };
-        cy.get(`div.${containerClass}`).then($e => {
-            if ($e.is(':visible')) {
+
+
+        cy.log(`Setting date to ${day}-${month}-${year}` + '\n'
+            + `Day: ${dayControl}` + '\n'
+            + `Month: ${monthControl}` + '\n'
+            + `Year: ${yearControl}` + '\n')
                 selectDate(dayControl, day);
                 selectDate(monthControl, month);
                 selectDate(yearControl, year);
-            }
-        });
+
     };
     fillTextField(selector, value) {
         cy.get(selector).type(value);

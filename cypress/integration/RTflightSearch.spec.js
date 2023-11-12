@@ -1,4 +1,5 @@
 import RTflightSearchPage from "../POM/RTflightSearchPage";
+import BookingComponent from "../POM/BookingComponent";
 
 
 const paxSearchData = [
@@ -13,6 +14,7 @@ const airlinesData = ["EK", "EY", "QR", "BA"];
 describe('Flight Search RT', () => {
 
     const rtFlightSearch = new RTflightSearchPage()
+    const bookingComponent = new BookingComponent()
 
     paxSearchData.forEach((data) => {
         it(`should make Search rt WITH ${data.adult} adult, ${data.child} child, ${data.infant} infant`, () => {
@@ -89,6 +91,79 @@ describe('Flight Search RT', () => {
         cy.allure().endStep()
     });
 
+    it('Shoudl validate traveller page for 1 pax', () => {
+
+        cy.allure().startStep("Make search with one Pax")
+        rtFlightSearch.makeSearchWithPax("1","0","0")
+        cy.allure().endStep()
+        cy.allure().startStep("Click branded fares")
+        rtFlightSearch.getFlightDetails()
+        cy.allure().endStep()
+        cy.allure().startStep("Go to Travller information page")
+        bookingComponent.bookFlight();
+        cy.allure().endStep()
+
+    });
+
+    it('Should validate traveler page for 2 adults', () => {
+        cy.allure().startStep("Make search with two adults")
+        rtFlightSearch.makeSearchWithPax("2","0","0")
+        cy.allure().endStep()
+        cy.allure().startStep("Select desired flights")
+        rtFlightSearch.getFlightDetails()
+        cy.allure().endStep()
+        cy.allure().startStep("Proceed to Traveler Information Page")
+        bookingComponent.bookFlight();
+        cy.allure().endStep()
+    });
+
+    it('Should validate traveler page for 3 adults', () => {
+        cy.allure().startStep("Make search with three adults")
+        rtFlightSearch.makeSearchWithPax("3","0","0")
+        cy.allure().endStep()
+        cy.allure().startStep("Select desired flights")
+        rtFlightSearch.getFlightDetails()
+        cy.allure().endStep()
+        cy.allure().startStep("Proceed to Traveler Information Page")
+        bookingComponent.bookFlight();
+        cy.allure().endStep()
+    });
+
+    it('Should validate traveler page for 1 adult and 1 child', () => {
+        cy.allure().startStep("Make search with one adult and one child")
+        rtFlightSearch.makeSearchWithPax("1","1","0")
+        cy.allure().endStep()
+        cy.allure().startStep("Select desired flights")
+        rtFlightSearch.getFlightDetails()
+        cy.allure().endStep()
+        cy.allure().startStep("Proceed to Traveler Information Page")
+        bookingComponent.bookFlight();
+        cy.allure().endStep()
+    });
+
+    it('Should validate traveler page for 1 adult and 1 infant', () => {
+        cy.allure().startStep("Make search with one adult and one infant")
+        rtFlightSearch.makeSearchWithPax("1","0","1")
+        cy.allure().endStep()
+        cy.allure().startStep("Select desired flights")
+        rtFlightSearch.getFlightDetails()
+        cy.allure().endStep()
+        cy.allure().startStep("Proceed to Traveler Information Page")
+        bookingComponent.bookFlight();
+        cy.allure().endStep()
+    });
+
+    it('Should validate traveler page for 1 adult, 1 child and 1 infant', () => {
+        cy.allure().startStep("Make search with one adult, one child and one infant")
+        rtFlightSearch.makeSearchWithPax("1","1","1")
+        cy.allure().endStep()
+        cy.allure().startStep("Select desired flights")
+        rtFlightSearch.getFlightDetails()
+        cy.allure().endStep()
+        cy.allure().startStep("Proceed to Traveler Information Page")
+        bookingComponent.bookFlight();
+        cy.allure().endStep()
+    });
 
 
 })
